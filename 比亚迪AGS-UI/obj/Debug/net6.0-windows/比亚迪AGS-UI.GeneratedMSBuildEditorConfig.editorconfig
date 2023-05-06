@@ -1,0 +1,24 @@
+is_global = true
+build_property.TargetFramework = net6.0-windows
+build_property.TargetPlatformMinVersion = 7.0
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = WpfBlazor
+build_property.RootNamespace = WpfBlazor
+build_property.ProjectDir = C:\Users\Administrator.LAPTOP-7D6B2GK7\RiderProjects\比亚迪AGS-UI\比亚迪AGS-UI\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\Administrator.LAPTOP-7D6B2GK7\RiderProjects\比亚迪AGS-UI\比亚迪AGS-UI
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/Administrator.LAPTOP-7D6B2GK7/RiderProjects/比亚迪AGS-UI/比亚迪AGS-UI/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator.LAPTOP-7D6B2GK7/RiderProjects/比亚迪AGS-UI/比亚迪AGS-UI/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "dgSpecHash": "/lKHNca7ofV5Y4iZevfDxDvYv9YvannvA5+oJs4FFwwisUykwQZHqAwpLRBZNam1abunDMkVfSn6j+4Exe/mlQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\RiderProjects\\比亚迪AGS-UI\\比亚迪AGS-WPF\\比亚迪AGS-WPF.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.0\\communitytoolkit.mvvm.8.2.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.configuration.binder\\7.0.0\\microsoft.extensions.configuration.binder.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.logging\\7.0.0\\microsoft.extensions.logging.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.0\\microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.options\\7.0.0\\microsoft.extensions.options.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\7.0.0\\microsoft.extensions.options.configurationextensions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\microsoft.io.recyclablememorystream\\2.2.1\\microsoft.io.recyclablememorystream.2.2.1.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\portable.bouncycastle\\1.9.0\\portable.bouncycastle.1.9.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\system.reactive\\5.0.0\\system.reactive.5.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\system.threading.tasks.dataflow\\7.0.0\\system.threading.tasks.dataflow.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512",
+    "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\.nuget\\packages\\workstation.uaclient\\3.2.0\\workstation.uaclient.3.2.0.nupkg.sha512"
+  ],
+  "logs": []
+}
