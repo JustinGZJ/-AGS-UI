@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Workstation.ServiceModel.Ua;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using SimpleTCP;
+using 比亚迪AGS_WPF.BydMes;
 
 namespace 比亚迪AGS_WPF
 {
@@ -18,7 +27,9 @@ namespace 比亚迪AGS_WPF
     {
         public App()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Services = ConfigureServices();
+
 
             this.InitializeComponent();
         }
@@ -26,26 +37,32 @@ namespace 比亚迪AGS_WPF
         /// <summary>
         /// Gets the current <see cref="App"/> instance in use
         /// </summary>
-        public new static App Current => (App)Application.Current;
-        private UaApplication application;
+        public new static App Current => (App) Application.Current;
+
+        public UaApplication OpcApplication { get; private set; }
+        public IConfigurationRoot Config { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="IServiceProvider"/> instance to resolve application services.
         /// </summary>
         public IServiceProvider Services { get; }
-        
-        
-        
+
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            // Build and run an OPC UA application instance.
-            this.application = new UaApplicationBuilder()
-                .SetApplicationUri($"urn:{Dns.GetHostName()}:Workstation.StatusHmi")
-                .SetDirectoryStore($"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Workstation.StatusHmi\\pki")
-                // .SetIdentity(this.ShowSignInDialog)
-                .Build();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
 
-            this.application.Run();
+            // Build and run an OPC UA application instance.
+            OpcApplication = new UaApplicationBuilder()
+                .SetApplicationUri($"urn:{Dns.GetHostName()}:Workstation.StatusHmi")
+                .AddMappedEndpoints(Config)
+                .Build();
+            OpcApplication.Run();
 
             // Create and show the main view.
         }
@@ -53,9 +70,37 @@ namespace 比亚迪AGS_WPF
         /// <summary>
         /// Configures the services for the application.
         /// </summary>
-        private static IServiceProvider ConfigureServices()
+        private  IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
+            // services
+            Config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("AppSettings.json", true)
+                .Build();
+            services.AddSingleton<IConfiguration>(Config);
+            
+            services.AddLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddSerilog();
+            });
+            var simpleTcpServer = new SimpleTcpServer
+            {
+                StringEncoder = Encoding.GetEncoding("GB2312"),
+                AutoTrimStrings = true,
+            };
+            simpleTcpServer.Start(Config.GetValue<int>("ServerPort"));
+            services.AddSingleton(simpleTcpServer);
+            services.AddSingleton<IConfiguration>(Config);
+            services.AddOptions<BydMesConfig>().Bind(Config.GetSection("BydMesConfig"));
+       //     var mesconfig = Config.GetSection("BydMesConfig").Get<BydMesConfig>();
+
+            // viewmodels
+            services.AddTransient<MainViewModel>();
+            
+            //     services.AddSingleton<TcpServer>();
+
             return services.BuildServiceProvider();
         }
     }
