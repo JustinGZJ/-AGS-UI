@@ -2,11 +2,15 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace 比亚迪AGS_WPF.BydMes;
 
 public class BydMesCom
 {
+    private readonly ILogger<BydMesCom> _logger;
+    private readonly BydMesConfig config;
     private string URL;
     private int PORT;
     private string Site;
@@ -17,8 +21,10 @@ public class BydMesCom
     private string NcCode;
     private int TimeOut;
 
-    public BydMesCom(BydMesConfig config)
+    public BydMesCom(IOptions<BydMesConfig>  configOptions,ILogger<BydMesCom> logger)
     {
+        _logger = logger;
+        config=configOptions.Value;
         URL = config.Url;
         PORT = config.Port;
         Site = config.Site;
@@ -49,6 +55,45 @@ public class BydMesCom
         验证结果 = CutResult(MES反馈);
     }
 
+    public void 离散装配(string 产品条码, string[] 部件码, out bool 验证结果, out string MES反馈)
+    {
+        var indentifierStr = "";
+        for (int i = 0; i < 部件码.Length; i++)
+        {
+           var indentifier = config.IdentifierObject[i];
+           var assyDataStr = $@"<IDENTIFIER_OBJECT>
+                <IDENTIFIER>{indentifier.Identifier}</IDENTIFIER>
+                <REVISION>{indentifier.Revision}</REVISION>
+                <QTY>{indentifier.Qty}</QTY>
+                <ASSY_DATA_VALUES>
+                <ASSY_DATA>
+                <DATA_FIELD>{indentifier.AssyDataValues.DataField}</DATA_FIELD>
+                <DATA_ATTR>{部件码[i]}</DATA_ATTR>
+                </ASSY_DATA>
+                </ASSY_DATA_VALUES>
+                </IDENTIFIER_OBJECT>{Environment.NewLine}";
+           indentifierStr += assyDataStr;
+        }
+
+        string param = $@"&message=<PRODUCTION_REQUEST><ASSEMBLE_COMPONENTS>
+<USER>{UserName}</USER>
+<SITE>{Site}</SITE>
+<PARENT_SFC>{产品条码}</PARENT_SFC>
+<OPERATION>{Operation}</OPERATION>
+<RESOURCE>{Resource}</RESOURCE>
+<CHECK_OPER>True</CHECK_OPER>
+<EVENT>baseFinished:AssemblyPoint</EVENT>
+<IDENTIFIER_LIST>
+{indentifierStr}
+</IDENTIFIER_LIST>
+</ASSEMBLE_COMPONENTS>
+</PRODUCTION_REQUEST>!erpautogy03!1234567@byd";
+        MES反馈 = GetHtmlByPost("http://" + URL + ":" + PORT + URL,
+            param,
+            TimeOut);
+        验证结果 = CutResult(MES反馈);
+    }
+
     public void 条码上传(
         bool 测试结果,
         string 产品条码,
@@ -63,7 +108,7 @@ public class BydMesCom
         验证结果 = CutResult(MES反馈);
     }
 
-    private string PassValidate(string 产品条码, string 文件版本, string 软件版本, string 测试项) => 
+    private string PassValidate(string 产品条码, string 文件版本, string 软件版本, string 测试项) =>
         GetHtmlByPost("http://" + URL + ":" + PORT + URL,
             "&message=PASS<PRODUCTION_REQUEST><COMPLETE><SFC_LIST><SFC><SITE>" + Site +
             "</SITE><ACTIVITY>XML</ACTIVITY><ID>" + 产品条码 + "</ID><RESOURCE>" + Resource + "</RESOURCE><OPERATION>" +
@@ -80,12 +125,14 @@ public class BydMesCom
             "</OPERATION><ROOT_CAUSE_OPER></ROOT_CAUSE_OPER><NC_CODE>" + NcCode +
             "</NC_CODE><ACTIVITY>XML</ACTIVITY></NC_LOG_COMPLETE></PRODUCTION_REQUEST>!erpautogy03!1234567@byd!ERROR," +
             文件版本 + "," + 软件版本 + 测试项, TimeOut);
-    
-    private  bool CutResult(string html) => html.Contains("</b>Y</td>");
 
-    private  string GetHtmlByPost(string URL, string Param, int TimeOut)
+    private bool CutResult(string html) => html.Contains("</b>Y</td>");
+
+    private string GetHtmlByPost(string URL, string Param, int TimeOut)
     {
         string str;
+        _logger.LogInformation("POST:"+Param);
+
         try
         {
             byte[] bytes = Encoding.GetEncoding("GB2312").GetBytes(Param);
@@ -110,7 +157,10 @@ public class BydMesCom
         catch (Exception ex)
         {
             str = ex.Message;
+            _logger.LogError(ex.Message);
         }
-        return str.Replace("&lt;", "<").Replace("&gt;", ">");
+        var result = str.Replace("&lt;", "<").Replace("&gt;", ">");
+        _logger.LogInformation(result);
+        return result;
     }
 }

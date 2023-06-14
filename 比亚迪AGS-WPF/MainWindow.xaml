@@ -39,7 +39,8 @@
                                 <RowDefinition Height="23*" />
                                 <RowDefinition Height="12*" />
                             </Grid.RowDefinitions>
-                            <Ellipse Style="{StaticResource LedStatus}"  Fill="{Binding ServerStatus,Mode=OneWay }"/>
+                            <Ellipse Style="{StaticResource LedStatus}"
+                                     Fill="{Binding ServerStatus,Mode=OneWay }"/>
                             <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">PLC</TextBlock>
                             </Border>
@@ -49,7 +50,10 @@
                                 <RowDefinition Height="23*" />
                                 <RowDefinition Height="12*" />
                             </Grid.RowDefinitions>
-                            <Ellipse Style="{StaticResource LedStatus}" Fill="{Binding RobotStatus,Mode=OneWay}" />
+                            <Ellipse Style="{StaticResource LedStatus}"
+                                     Fill="{Binding RobotStatus,Mode=OneWay,
+                                     Converter={StaticResource BoolToBrushConverter},
+                                     ConverterParameter=Chartreuse}" />
                             <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">机器人</TextBlock>
                             </Border>
@@ -60,7 +64,10 @@
                                 <RowDefinition Height="23*" />
                                 <RowDefinition Height="12*" />
                             </Grid.RowDefinitions>
-                            <Ellipse Style="{StaticResource LedStatus}" Fill="{Binding AlarmStatus,Mode=OneWay}"/>
+                            <Ellipse Style="{StaticResource LedStatus}" 
+                                     Fill="{Binding AlarmStatus,Mode=OneWay,
+                                     Converter={StaticResource BoolToBrushConverter}
+                                     ,ConverterParameter=Chartreuse}"/>
 
                             <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">报警</TextBlock>
@@ -109,8 +116,13 @@
                     </DataGrid>
                 </Grid>
                 <Grid Grid.Row="2" x:Name="lbsheet2">
-                    <DataGrid  ItemsSource="{Binding TestLogs}" AutoGenerateColumns="True">
-                    
+                    <DataGrid  ItemsSource="{Binding TestLogs}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="时间" Width="*" Binding="{Binding Time}" />
+                            <DataGridTextColumn Header="类型" Width="*" Binding="{Binding Type}" />
+                            <DataGridTextColumn Header="消息" Width="2*" Binding="{Binding Log}" />
+                            <DataGridTextColumn Header="等级" Width="*" Binding="{Binding Level}" />
+                        </DataGrid.Columns>          
                     </DataGrid>
                 </Grid>
                 <Grid Grid.Row="3" x:Name="lbbuttons">
@@ -268,8 +280,9 @@
                     </Border>
                     <Border BorderBrush="Black" Grid.Column="1" BorderThickness="1">
                         <TextBlock FontSize="16" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center"
+                                   Text="{Binding ProductStatus}"
                                    VerticalAlignment="Center">
-                            合格/不合格
+                            
                         </TextBlock>
                     </Border>
                 </Grid>
@@ -316,7 +329,7 @@
                                 <TextBlock>工单数量</TextBlock>
                             </Border>
                             <Border Grid.Row="2" Grid.Column="1" BorderThickness=" 0 0 1 1" BorderBrush="Black">
-                                <TextBlock></TextBlock>
+                                <TextBlock Text="{Binding WorkOderQty}"></TextBlock>
                             </Border>
 
                             <Border Grid.Row="3" Grid.Column="0" BorderThickness=" 0 0 1 1" BorderBrush="Black">
@@ -341,7 +354,7 @@
                                 <TextBlock>生产时间</TextBlock>
                             </Border>
                             <Border Grid.Row="6" Grid.Column="1" BorderThickness=" 0 0 1 1" BorderBrush="Black">
-                                <TextBlock></TextBlock>
+                                <TextBlock Text="{Binding ProductTime}"></TextBlock>
                             </Border>
 
                         </Grid>

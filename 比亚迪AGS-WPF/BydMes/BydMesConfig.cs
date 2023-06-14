@@ -1,4 +1,6 @@
-﻿namespace 比亚迪AGS_WPF.BydMes;
+﻿using System.Collections.Generic;
+
+namespace 比亚迪AGS_WPF.BydMes;
 
 public class BydMesConfig
 {
@@ -11,4 +13,19 @@ public class BydMesConfig
     public string Operation { get; set;}
     public string NcCode { get; set;}
     public int TimeOut { get; set;}
+    public List<IdentifierObject> IdentifierObject { get; set; }
+}
+
+public class AssyData
+{
+    public string DataField { get; set; }
+    public string DataAttr { get; set; }
+}
+
+public class IdentifierObject
+{
+    public string Identifier { get; set; }
+    public string Revision { get; set; }
+    public string Qty { get; set; }
+    public AssyData AssyDataValues { get; set; }
 }

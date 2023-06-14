@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Tools.Extension;
 using Microsoft.Extensions.Configuration;
 using SimpleTCP;
 using Workstation.ServiceModel.Ua;
+using 比亚迪AGS_WPF.Services;
 
 namespace 比亚迪AGS_WPF;
 
@@ -21,15 +26,19 @@ public class TestItem
     public string Result { get; set; }
 }
 
+public class TestLog
+{
+    public string Time { get; set; } = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    public string Type { get; set; }
+    public string Log { get; set; }
+    public string Level { get; set; }
+}
 
 [Subscription(endpointUrl: "MainPLC", publishingInterval: 500, keepAliveCount: 20)]
 public partial class MainViewModel : SubscriptionBase
 {
-    private readonly SimpleTcpServer _simpleTcpServer;
-
-    public MainViewModel(SimpleTcpServer simpleTcpServer)
+    public MainViewModel()
     {
-        _simpleTcpServer = simpleTcpServer;
         Title = App.Current.Config.GetValue<string>("title");
         Version = App.Current.Config.GetValue<string>("Version");
         PhoneNumber = App.Current.Config.GetValue<string>("PhoneNumber");
@@ -40,11 +49,87 @@ public partial class MainViewModel : SubscriptionBase
         timer.Tick += ((sender, args) =>
         {
             NotifyPropertyChanged(nameof(CurrentTIme));
-            NotifyPropertyChanged(nameof(TcpStatus));
-           // TcpStatus
+            // TcpStatus
         });
         timer.Start();
+        WeakReferenceMessenger.Default.Register<TcpStatusMessage>(this,
+            (r, m) => { TcpStatus = m.Value ? Brushes.Chartreuse : Brushes.Red; });
+        WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, ((recipient, message) =>
+        {
+            var testItems = message.Value.Split('!').Where(x => x.Contains(",")).Select(x =>
+            {
+                var m = x.Split(',');
+                return new TestItem()
+                {
+                    Name = m[0],
+                    Parameter = m[1],
+                    Value = m[2],
+                    Result = message.Result
+                };
+            });
+            // 保存文件
+            SaveFile(message, testItems);
+            
+            // 刷新界面
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                TestItems.Clear();
+                foreach (var item in testItems)
+                {
+                    TestItems.Add(item);
+                }
+            });
+        }));
+        WeakReferenceMessenger.Default.Register<TestLog>(this, ((recipient, message) =>
+        {
+            var log = new TestLog()
+            {
+                Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                Type = message.Type,
+                Log = message.Log,
+                Level = message.Level
+            };
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                TestLogs.Add(log);
+                if (TestLogs.Count > 200)
+                    TestLogs.RemoveAt(0);
+            });
+        }));
+    }
 
+    private static void SaveFile(DataUploadMessage message, IEnumerable<TestItem> testItems)
+    {
+        // 保存文件
+        var fileName = AppDomain.CurrentDomain.BaseDirectory + "Data\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".csv";
+        // 检查目录是否存在
+        if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Data\\"))
+        {
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Data\\");
+        }
+
+        // 把数据放如dictionary
+        var dictionary = new Dictionary<string, string>();
+        dictionary.Add("时间", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        dictionary.Add("站位", message.Station);
+        dictionary.Add("结果", message.Result);
+        foreach (var item in testItems)
+        {
+            dictionary.TryAdd(item.Name, item.Value);
+        }
+
+        // 把dictionary内的数据追加到文件，如果文件不存在则追加表头
+        //检查文件是否存在
+        var fileExists = File.Exists(fileName);
+        var header = string.Join(",", dictionary.Keys);
+        //添加表头到文件
+        if (!fileExists)
+        {
+            File.WriteAllText(fileName, header + Environment.NewLine);
+        }
+
+        //将数据追加到文件
+        File.AppendAllText(fileName, string.Join(",", dictionary.Values) + Environment.NewLine);
     }
 
 
@@ -65,9 +150,15 @@ public partial class MainViewModel : SubscriptionBase
     private int _totalCount = 0;
     private int _maintenance;
     private int _workOderQty;
+
     private int _completeQty;
     private int _okQty;
     private string? _phoneNumber;
+    private Brush _tcpStatus = Brushes.Gray;
+    private bool _robotStatus;
+    private bool _alarmStatus;
+    private string _productStatus;
+    private int _productTime;
 
     #endregion
 
@@ -86,8 +177,6 @@ public partial class MainViewModel : SubscriptionBase
             NotifyPropertyChanged(nameof(ServerStatus));
         }
     }
-
-   
 
 
     /// <summary>
@@ -114,22 +203,49 @@ public partial class MainViewModel : SubscriptionBase
         }
     }
 
+
     /// <summary>
     /// 机器人状态
     /// </summary>
-    public Brush RobotStatus => Brushes.Chartreuse;
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.机器人")]
+    public bool RobotStatus
+    {
+        get => _robotStatus;
+        set => SetProperty(ref _robotStatus, value);
+    }
 
 
     /// <summary>
     /// 报警状态
     /// </summary>
-    public Brush AlarmStatus => Brushes.Chartreuse;
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.报警")]
+    public bool AlarmStatus
+    {
+        get => _alarmStatus;
+        set => SetProperty(ref _alarmStatus, value);
+    }
+
+
+    /// <summary>
+    /// 产品状态
+    /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品状态")]
+    public string ProductStatus
+    {
+        get => _productStatus;
+        set => SetProperty(ref _productStatus, value);
+    }
 
 
     /// <summary>
     /// TCP状态
     /// </summary>
-    public Brush TcpStatus => _simpleTcpServer.ConnectedClientsCount>0? Brushes.Chartreuse:Brushes.Brown;
+    public Brush TcpStatus
+    {
+        get { return _tcpStatus; }
+        set { SetProperty(ref _tcpStatus, value); }
+    }
 
 
     /// <summary>
@@ -152,9 +268,19 @@ public partial class MainViewModel : SubscriptionBase
     }
 
     /// <summary>
+    /// 生产时间
+    /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.生产时间")]
+    public int ProductTime
+    {
+        get => _productTime;
+        set => SetProperty(ref _productTime, value);
+    }
+
+    /// <summary>
     /// 产品条码
     /// </summary>
-
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品条码")]
     public string ProductBarcode
     {
         get => _productBarcode;
@@ -164,6 +290,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 当前用户名
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.作业员")]
     public string UserName
     {
         get => _userName;
@@ -173,6 +300,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 模式
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.模式")]
     public string Mode
     {
         get => _mode;
@@ -182,7 +310,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 产品编码
     /// </summary>
-
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品编码")]
     public string ProductId
     {
         get => _productId;
@@ -192,7 +320,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 产品名称
     /// </summary>
-
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品名称")]
     public string ProductName
     {
         get => _productName;
@@ -203,7 +331,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 产品代码
     /// </summary>
-
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品代码")]
     public string ProductCode
     {
         get => _productCode;
@@ -213,15 +341,15 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 工装绑定
     /// </summary>
-
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.工装绑定")]
     public string FixtureBinding
     {
         get => _fixtureBinding;
         set => SetProperty(ref this._fixtureBinding, value);
     }
-    
+
     /// <summary>
-    /// 工装绑定
+    /// 联系电话
     /// </summary>
 
     public string? PhoneNumber
@@ -234,6 +362,7 @@ public partial class MainViewModel : SubscriptionBase
     /// 运行状态
     /// </summary>
     ///
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.运行状态")]
     public string RunningStatus
     {
         get => _runningStatus;
@@ -243,6 +372,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 操作提示
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.操作提示")]
     public string OperationPrompt
     {
         get => _operationPrompt;
@@ -252,6 +382,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 总次数
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.总次数")]
     public int TotalCount
     {
         get => _totalCount;
@@ -261,6 +392,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 保养计数
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.保养计数")]
     public int Maintenance
     {
         get => _maintenance;
@@ -270,6 +402,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 工单数量
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.工单数量")]
     public int WorkOderQty
     {
         get => _workOderQty;
@@ -279,12 +412,14 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 完成数
     /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.完成数")]
+
     public int CompleteQty
     {
         get => _completeQty;
         set
         {
-            SetProperty(ref this._completeQty, value); 
+            SetProperty(ref this._completeQty, value);
             NotifyPropertyChanged(nameof(YieldRate));
         }
     }
@@ -292,13 +427,13 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 合格数
     /// </summary>
-    
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.合格数")]
     public int OkQty
     {
         get => _okQty;
         set
         {
-            SetProperty(ref this._okQty, value); 
+            SetProperty(ref this._okQty, value);
             NotifyPropertyChanged(nameof(YieldRate));
         }
     }
@@ -307,33 +442,21 @@ public partial class MainViewModel : SubscriptionBase
     /// 合格率
     /// </summary>
     public string YieldRate => _totalCount > 0 ? (_okQty * 1.0 / _totalCount).ToString("P2") : 0.ToString("P2");
-  
-    /// <summary>
-   /// 当前时间
-   /// </summary>
 
-   public string CurrentTIme=>DateTime.Now.ToString("G");
+    /// <summary>
+    /// 当前时间
+    /// </summary>
+
+    public string CurrentTIme => DateTime.Now.ToString("G");
+
     /// <summary>
     /// 测试项目
     /// </summary>
     public ObservableCollection<TestItem> TestItems { get; } = new()
     {
-        new TestItem { Name = "Test 1", Parameter = "Parameter 1", Value = "10", Result = int.Parse("10") >= 0 ? "OK" : "NG" },
-        new TestItem { Name = "Test 2", Parameter = "Parameter 2", Value = "-5", Result = int.Parse("-5") >= 0 ? "OK" : "NG" },
-        new TestItem { Name = "Test 3", Parameter = "Parameter 3", Value = "20", Result = int.Parse("20") >= 0 ? "OK" : "NG" },
-        new TestItem { Name = "Test 4", Parameter = "Parameter 4", Value = "-15", Result = int.Parse("-15") >= 0 ? "OK" : "NG" }
     };
 
-    public ObservableCollection<dynamic> TestLogs { get; set; } = new ObservableCollection<dynamic>(Enumerable
-        .Range(1, 10).Select(i =>
-        {
-            dynamic expandoObject = new ExpandoObject();
-            expandoObject.Name = $"Test {i}";
-            expandoObject.Parameter = $"Parameter {i}";
-            expandoObject.Value = i * 10;
-            expandoObject.Result = i % 2 == 0 ? "OK" : "NG";
-            return expandoObject;
-        }));
+    public ObservableCollection<TestLog> TestLogs { get; set; } = new();
 
     #endregion
 

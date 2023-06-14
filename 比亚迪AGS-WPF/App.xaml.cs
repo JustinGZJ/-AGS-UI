@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using SimpleTCP;
 using 比亚迪AGS_WPF.BydMes;
+using 比亚迪AGS_WPF.Services;
 
 namespace 比亚迪AGS_WPF
 {
@@ -64,13 +65,17 @@ namespace 比亚迪AGS_WPF
                 .Build();
             OpcApplication.Run();
 
+            Services.GetService<TcpServerService>();
+            Services.GetService<MesService>();
+
+
             // Create and show the main view.
         }
 
         /// <summary>
         /// Configures the services for the application.
         /// </summary>
-        private  IServiceProvider ConfigureServices()
+        private IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
             // services
@@ -79,26 +84,20 @@ namespace 比亚迪AGS_WPF
                 .AddJsonFile("AppSettings.json", true)
                 .Build();
             services.AddSingleton<IConfiguration>(Config);
-            
+
             services.AddLogging(logging =>
             {
                 logging.ClearProviders();
                 logging.AddSerilog();
             });
-            var simpleTcpServer = new SimpleTcpServer
-            {
-                StringEncoder = Encoding.GetEncoding("GB2312"),
-                AutoTrimStrings = true,
-            };
-            simpleTcpServer.Start(Config.GetValue<int>("ServerPort"));
-            services.AddSingleton(simpleTcpServer);
             services.AddSingleton<IConfiguration>(Config);
             services.AddOptions<BydMesConfig>().Bind(Config.GetSection("BydMesConfig"));
-       //     var mesconfig = Config.GetSection("BydMesConfig").Get<BydMesConfig>();
-
+            services.AddSingleton<TcpServerService>();
+            services.AddTransient<BydMesCom>();
+            services.AddSingleton<MesService>();
             // viewmodels
             services.AddTransient<MainViewModel>();
-            
+
             //     services.AddSingleton<TcpServer>();
 
             return services.BuildServiceProvider();
