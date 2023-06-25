@@ -122,3 +122,5 @@ D:\A1.项目程序\扇叶装配\比亚迪AGS-WPF\bin\Debug\net6.0-windows\Micros
 D:\A1.项目程序\扇叶装配\比亚迪AGS-WPF\bin\Debug\net6.0-windows\System.Windows.Interactivity.dll
 D:\A1.项目程序\扇叶装配\比亚迪AGS-WPF\obj\Debug\net6.0-windows\Views\EnquireView.g.cs
 D:\A1.项目程序\扇叶装配\比亚迪AGS-WPF\obj\Debug\net6.0-windows\Views\EnquireView.baml
+D:\A1.项目程序\扇叶装配\比亚迪AGS-WPF\obj\Debug\net6.0-windows\Views\TestLogView.g.cs
+D:\A1.项目程序\扇叶装配\比亚迪AGS-WPF\obj\Debug\net6.0-windows\Views\TestLogView.baml

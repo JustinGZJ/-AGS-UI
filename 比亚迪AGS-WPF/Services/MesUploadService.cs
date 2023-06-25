@@ -19,11 +19,11 @@ public class MesService
             });
             mes.用户验证(out bool 验证结果, out string mes反馈);
 
-            string cleanText =RemoveHtmlTags(mes反馈);
+            string cleanText = RemoveHtmlTags(mes反馈);
             m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
 
             WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{mes反馈}", Level = "INFO" });
+            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
         });
         WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, (r, m) =>
         {
@@ -39,7 +39,7 @@ public class MesService
             m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
 
             WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{mes反馈}", Level = "INFO" });
+            { Type = "MES", Log = $"cleanText：{cleanText}", Level = "INFO" });
 
         });
         WeakReferenceMessenger.Default.Register<CodeVerifyMessage>(this, (r, m) =>
@@ -56,7 +56,7 @@ public class MesService
             m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
 
             WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{mes反馈}", Level = "INFO" });
+            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
         });
         WeakReferenceMessenger.Default.Register<AssemblyMessage>(this, (r, m) =>
         {
@@ -72,7 +72,7 @@ public class MesService
             m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
 
             WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{mes反馈}", Level = "INFO" });
+            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
         });
         WeakReferenceMessenger.Default.Register<OrderBindingMessage>(this, (r, m) =>
         {
@@ -89,7 +89,7 @@ public class MesService
             m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
             //m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + mes反馈);
             WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{mes反馈}", Level = "INFO" });
+            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
         });
     }
 

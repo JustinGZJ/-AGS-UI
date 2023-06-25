@@ -46,6 +46,10 @@ public partial class MainViewModel : SubscriptionBase
     public DelegateCommand<string> EnquireDialog =>
          _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog);//用来打开添加数据库各种模块DeleteProject
 
+    public DelegateCommand<string> _OpenCommand;
+    public DelegateCommand<string> OpenCommand =>
+         _OpenCommand ??= new DelegateCommand<string>(UiChange);//用来打开添加数据库各种模块DeleteProject
+
     public MainViewModel()
     {
         Title = App.Current.Config.GetValue<string>("title");
@@ -58,6 +62,7 @@ public partial class MainViewModel : SubscriptionBase
         timer.Tick += ((sender, args) =>
         {
             NotifyPropertyChanged(nameof(CurrentTIme));
+            HeartBeat = !HeartBeat;
             // TcpStatus
         });
         timer.Start();
@@ -152,10 +157,20 @@ public partial class MainViewModel : SubscriptionBase
     private void Enquire_Dialog(string obj)
     {
         EnquireView popup = new EnquireView();
-        popup.ShowDialog();
-        //DialogParameters keys = new DialogParameters();
-        //keys.Add("Title", SelectedItems);
-        //dialogService.ShowDialog(obj);
+        popup.ShowDialog();        
+    }
+    
+    private void UiChange(string obj)
+    {
+        switch (obj)
+        {
+             case "TestLogView":
+                Body = new TestLogView();  
+                break;//ConfigView
+            case "ConfigView": 
+                Body = new ConfigView(); 
+                break;
+        }
     }
 
     #region fields
@@ -184,6 +199,8 @@ public partial class MainViewModel : SubscriptionBase
     private bool _alarmStatus;
     private string _productStatus;
     private int _productTime;
+    private Object body;
+    private bool _hartBeat;
 
     #endregion
 
@@ -434,6 +451,17 @@ public partial class MainViewModel : SubscriptionBase
         set => SetProperty(ref this._workOderQty, value);
     }
 
+
+    /// <summary>
+    /// 心跳， OPC库
+    /// </summary>
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.心跳")]
+    public bool HeartBeat
+    {
+        get => _hartBeat;
+        set => SetProperty(ref this._hartBeat, value);
+    }
+
     /// <summary>
     /// 完成数
     /// </summary>
@@ -460,6 +488,15 @@ public partial class MainViewModel : SubscriptionBase
         {
             SetProperty(ref this._okQty, value);
             NotifyPropertyChanged(nameof(YieldRate));
+        }
+    }
+
+    public Object Body
+    {
+        get => body;
+        set
+        {
+            SetProperty(ref this.body, value);
         }
     }
 

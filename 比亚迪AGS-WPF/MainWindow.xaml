@@ -156,34 +156,22 @@
                     </DataGrid>
                 </Grid>
                 <Grid x:Name="lbsheet2" Grid.Row="2">
-                    <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TestLogs}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding Time}"
-                                Header="时间" />
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding Type}"
-                                Header="类型" />
-                            <DataGridTextColumn
-                                Width="2*"
-                                Binding="{Binding Log}"
-                                Header="消息" />
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding Level}"
-                                Header="等级" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <ContentControl x:Name="Text" Content="{Binding Body}">
+                        <!--  使用内容呈现器来显示用户控件界面 Content="{Binding Body}" prism:RegionManager.RegionName="ContentRegion"  -->
+                    </ContentControl>
                 </Grid>
                 <Grid x:Name="lbbuttons" Grid.Row="3">
                     <UniformGrid Columns="8">
                         <Button Style="{StaticResource LbbStyle}">开始运行</Button>
                         <Button Style="{StaticResource LbbStyle}">停止</Button>
-                        <Button Style="{StaticResource LbbStyle}">监视页面</Button>
                         <Button
-                            Command="{Binding ConfigDialog}"
+                            Command="{Binding OpenCommand}"
+                            CommandParameter="TestLogView"
+                            Style="{StaticResource LbbStyle}">
+                            监视页面
+                        </Button>
+                        <Button
+                            Command="{Binding OpenCommand}"
                             CommandParameter="ConfigView"
                             Style="{StaticResource LbbStyle}">
                             配置信息
@@ -568,7 +556,7 @@
             <Border Grid.Column="0" Style="{StaticResource GridBorder}" />
             <Border Grid.Column="1" Style="{StaticResource GridBorder}" />
         </Grid>
-        
+
         <Grid
             x:Name="footer"
             Grid.Row="1"
