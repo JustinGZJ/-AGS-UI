@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3NwXCzBQMWrS/OJ13ydVRN8SaNixTd2aVrzY8iphwRw=",
+  "Hash": "3/9RQRMbFuXhT0hD+/OwplAnv6vpTqcmhwmhdQfjgPA=",
   "Source": "比亚迪AGS-UI",
   "BasePath": "/",
   "Mode": "Root",
@@ -10,17 +10,17 @@
     {
       "Name": "比亚迪AGS-UI\\wwwroot",
       "Source": "比亚迪AGS-UI",
-      "ContentRoot": "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\RiderProjects\\比亚迪AGS-UI\\比亚迪AGS-UI\\wwwroot\\",
+      "ContentRoot": "D:\\A1.项目程序\\扇叶装配\\比亚迪AGS-UI\\wwwroot\\",
       "BasePath": "/",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\RiderProjects\\比亚迪AGS-UI\\比亚迪AGS-UI\\wwwroot\\css\\app.css",
+      "Identity": "D:\\A1.项目程序\\扇叶装配\\比亚迪AGS-UI\\wwwroot\\css\\app.css",
       "SourceId": "比亚迪AGS-UI",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\RiderProjects\\比亚迪AGS-UI\\比亚迪AGS-UI\\wwwroot\\",
+      "ContentRoot": "D:\\A1.项目程序\\扇叶装配\\比亚迪AGS-UI\\wwwroot\\",
       "BasePath": "/",
       "RelativePath": "css/app.css",
       "AssetKind": "All",
@@ -34,10 +34,10 @@
       "OriginalItemSpec": "wwwroot\\css\\app.css"
     },
     {
-      "Identity": "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\RiderProjects\\比亚迪AGS-UI\\比亚迪AGS-UI\\wwwroot\\index.html",
+      "Identity": "D:\\A1.项目程序\\扇叶装配\\比亚迪AGS-UI\\wwwroot\\index.html",
       "SourceId": "比亚迪AGS-UI",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Administrator.LAPTOP-7D6B2GK7\\RiderProjects\\比亚迪AGS-UI\\比亚迪AGS-UI\\wwwroot\\",
+      "ContentRoot": "D:\\A1.项目程序\\扇叶装配\\比亚迪AGS-UI\\wwwroot\\",
       "BasePath": "/",
       "RelativePath": "index.html",
       "AssetKind": "All",

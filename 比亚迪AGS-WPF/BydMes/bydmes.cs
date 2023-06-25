@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -21,12 +22,12 @@ public class BydMesCom
     private string NcCode;
     private int TimeOut;
 
-    public BydMesCom(IOptions<BydMesConfig>  configOptions,ILogger<BydMesCom> logger)
+    public BydMesCom(IOptions<BydMesConfig>  configOptions, IOptions<List<UserConfig>> User_config, ILogger<BydMesCom> logger)
     {
         _logger = logger;
         config=configOptions.Value;
+        Global.user_config = User_config.Value;
         URL = config.Url;
-        PORT = config.Port;
         Site = config.Site;
         UserName = config.UserName;
         Password = config.Password;
@@ -38,7 +39,7 @@ public class BydMesCom
 
     public void 用户验证(out bool 验证结果, out string MES反馈)
     {
-        MES反馈 = GetHtmlByPost("http://" + URL + ":" + PORT + URL,
+        MES反馈 = GetHtmlByPost(URL,
             "&message=<PRODUCTION_REQUEST><USER><SITE>" + Site + "</SITE><NAME>" + UserName + "</NAME><PWD>" +
             Password + "</PWD></USER></PRODUCTION_REQUEST>", TimeOut);
         验证结果 = CutResult(MES反馈);
@@ -46,7 +47,7 @@ public class BydMesCom
 
     public void 条码验证(string 产品条码, out bool 验证结果, out string MES反馈)
     {
-        MES反馈 = GetHtmlByPost("http://" + URL + ":" + PORT + URL,
+        MES反馈 = GetHtmlByPost(URL,
             "&message=<PRODUCTION_REQUEST><START><SFC_LIST><SFC><SITE>" + Site + "</SITE><ACTIVITY>XML</ACTIVITY><ID>" +
             产品条码 + "</ID><RESOURCE>" + Resource + "</RESOURCE><OPERATION>" + Operation + "</OPERATION><USER>" +
             UserName +
@@ -88,9 +89,25 @@ public class BydMesCom
 </IDENTIFIER_LIST>
 </ASSEMBLE_COMPONENTS>
 </PRODUCTION_REQUEST>!erpautogy03!1234567@byd";
-        MES反馈 = GetHtmlByPost("http://" + URL + ":" + PORT + URL,
+        MES反馈 = GetHtmlByPost( URL,
             param,
             TimeOut);
+        验证结果 = CutResult(MES反馈);
+    }
+
+    public void 工单绑定(string 工单, out bool 验证结果, out string MES反馈)
+    {
+        MES反馈 = GetHtmlByPost(URL,
+    $@"&message=<PRODUCTION_REQUEST>
+< RESOURCE_BANDING_SHOPORDER >
+< SITE > {Site} </ SITE >
+< NAME > {UserName} </ NAME >
+< PWD > {Password} </ PWD >
+< RESOURCE > {Resource} </ RESOURCE >
+< SHOPORDER > {工单} </ SHOPORDER >
+</ RESOURCE_BANDING_SHOPORDER >
+</ PRODUCTION_REQUEST > ",
+    TimeOut);
         验证结果 = CutResult(MES反馈);
     }
 
@@ -109,7 +126,7 @@ public class BydMesCom
     }
 
     private string PassValidate(string 产品条码, string 文件版本, string 软件版本, string 测试项) =>
-        GetHtmlByPost("http://" + URL + ":" + PORT + URL,
+        GetHtmlByPost(URL,
             "&message=PASS<PRODUCTION_REQUEST><COMPLETE><SFC_LIST><SFC><SITE>" + Site +
             "</SITE><ACTIVITY>XML</ACTIVITY><ID>" + 产品条码 + "</ID><RESOURCE>" + Resource + "</RESOURCE><OPERATION>" +
             Operation + "</OPERATION><USER>" + UserName +
@@ -117,7 +134,7 @@ public class BydMesCom
             文件版本 + "," + 软件版本 + 测试项, TimeOut);
 
     private string ErrorValidate(string 产品条码, string 文件版本, string 软件版本, string 测试项) =>
-        GetHtmlByPost("http://" + URL + ":" + PORT + URL,
+        GetHtmlByPost( URL,
             "&message=ERROR<PRODUCTION_REQUEST><NC_LOG_COMPLETE><SITE>" + Site + "</SITE><OWNER TYPE=\"USER\">" +
             UserName + "</OWNER><NC_CONTEXT>" + 产品条码 +
             "</NC_CONTEXT><QTY></QTY><IDENTIFIER></IDENTIFIER><FAILURE_ID></FAILURE_ID><DEFECT_COUNT>1</DEFECT_COUNT><COMMENTS></COMMENTS><DATE_TIME></DATE_TIME><RESOURCE>" +
@@ -131,7 +148,7 @@ public class BydMesCom
     private string GetHtmlByPost(string URL, string Param, int TimeOut)
     {
         string str;
-        _logger.LogInformation("POST:"+Param);
+        _logger.LogInformation("POST:"+URL+Param);
 
         try
         {

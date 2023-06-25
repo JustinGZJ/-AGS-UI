@@ -17,12 +17,20 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+      <PackageReference Include="Prism.Core" Version="8.1.97" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
       <PackageReference Include="SimpleTCP.Core" Version="1.0.4" />
       <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+      <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525" />
       <PackageReference Include="Workstation.UaClient" Version="3.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Newtonsoft.Json">
+        <HintPath>..\..\..\A3.学习文件\学习文件\工具\Newtonsoft.Json.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
     <ItemGroup>

@@ -39,9 +39,24 @@ public class DataUploadMessage
     public Message message { get; set; }
 }
 
+public class OrderBindingMessage
+{
+    public string Station { get; set; }
+    public string Order { get; set; }
+    public Message message { get; set; }
+}
+
 public class AssemblyMessage
 {
     public string Station { get; set; }
+    public string Code { get; set; }
+    public string[] PartCodes { get; set; }
+    public Message message { get; set; }
+}
+
+public class UserValidate
+{
+    public string Staff_ID { get; set; }
     public string Code { get; set; }
     public string[] PartCodes { get; set; }
     public Message message { get; set; }
@@ -81,6 +96,7 @@ public class TcpServerService
         // Console.WriteLine($"Client connected: {e.Client.RemoteEndPoint}");
     }
 
+    //WeakReferenceMessenger 类使用单例模式,可以WeakReferenceMessenger.Default 静态属性来获取默认的全局实例
     private void Server_DataReceived(object sender, SimpleTCP.Message e)
     {
         var msg = e.MessageString;
@@ -93,19 +109,26 @@ public class TcpServerService
                 {
                     Station = splits[0],
                     Code = splits[2],
-                    message= e
+                    message = e
                 });
                 break;
             case "数据上传":
             case "上传数据":
-                WeakReferenceMessenger.Default.Send(new DataUploadMessage
+                if (splits.Length >4)
                 {
-                    Station = splits[0],
-                    Code = splits[2],
-                    Result = splits[3],
-                    Value = splits[4],
-                    message= e
-                });
+                    WeakReferenceMessenger.Default.Send(new DataUploadMessage
+                    {
+                        Station = splits[0],
+                        Code = splits[2],
+                        Result = splits[3],
+                        Value = splits[4],
+                        message = e
+                    });
+                }
+                else
+                {
+                    e.Reply("N;格式错误");
+                }
                 break;
             case "离散装配":
                 WeakReferenceMessenger.Default.Send(new AssemblyMessage
@@ -113,7 +136,7 @@ public class TcpServerService
                     Station = splits[0],
                     Code = splits[2],
                     PartCodes = splits[3..],
-                    message= e
+                    message = e
                 });
                 break;
             case "用户登录":
@@ -121,11 +144,19 @@ public class TcpServerService
                 {
                     Station = splits[0],
                     CardNo = splits[2],
-                    message= e
+                    message = e
+                });
+                break;
+            case "工单绑定":  // 站位;工单绑定;工单
+                WeakReferenceMessenger.Default.Send(new OrderBindingMessage
+                {
+                    Station = splits[0],
+                    Order = splits[2],
+                    message = e
                 });
                 break;
         }
 
-      //  e.ReplyLine("OK");
+        //  e.ReplyLine("OK");
     }
 }

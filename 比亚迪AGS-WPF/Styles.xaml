@@ -1,39 +1,41 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Accessibility;assembly=Accessibility"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    
-    
-    <!-- mainwindow 底部按钮 -->
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Accessibility;assembly=Accessibility"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+
+    <!--  mainwindow 底部按钮  -->
     <Style x:Key="LbbStyle" TargetType="Button">
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#BCE863" Offset="0.3" />
-                    <GradientStop Color="#6F8B34" Offset="1" />
+                    <GradientStop Offset="0.3" Color="#BCE863" />
+                    <GradientStop Offset="1" Color="#6F8B34" />
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="FontSize" Value="16"></Setter>
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Foreground" Value="Black" />
-        <Setter Property="Margin" Value="10"></Setter>
+        <Setter Property="Margin" Value="10" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" CornerRadius="10"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center" />
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#aaA8E063" Offset="0.3" />
-                                        <GradientStop Color="#aa6F8B34" Offset="1" />
+                                        <GradientStop Offset="0.3" Color="#aaA8E063" />
+                                        <GradientStop Offset="1" Color="#aa6F8B34" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -42,8 +44,8 @@
                             <Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#aa8BC34A" Offset="0.3" />
-                                        <GradientStop Color="#aa6F8B34" Offset="1" />
+                                        <GradientStop Offset="0.3" Color="#aa8BC34A" />
+                                        <GradientStop Offset="1" Color="#aa6F8B34" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -53,36 +55,37 @@
             </Setter.Value>
         </Setter>
     </Style>
-     <!-- mainwindow 退出按钮 -->
+    <!--  mainwindow 退出按钮  -->
     <Style x:Key="LbbExitStyle" TargetType="Button">
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#FF7F7A" Offset="0.3" />
-                    <GradientStop Color="#AF3733" Offset="1" />
+                    <GradientStop Offset="0.3" Color="#FF7F7A" />
+                    <GradientStop Offset="1" Color="#AF3733" />
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="FontSize" Value="16"></Setter>
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Foreground" Value="Black" />
-        <Setter Property="Margin" Value="10"></Setter>
+        <Setter Property="Margin" Value="10" />
         <Setter Property="BorderBrush" Value="Black" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" CornerRadius="10"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center" />
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#AAFF7F7A" Offset="0.3" />
-                                        <GradientStop Color="#AAAF3733" Offset="1" />
+                                        <GradientStop Offset="0.3" Color="#AAFF7F7A" />
+                                        <GradientStop Offset="1" Color="#AAAF3733" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -91,8 +94,8 @@
                             <Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#AAFF7F7A" Offset="0.5" />
-                                        <GradientStop Color="#AAAF3733" Offset="1" />
+                                        <GradientStop Offset="0.5" Color="#AAFF7F7A" />
+                                        <GradientStop Offset="1" Color="#AAAF3733" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -102,25 +105,25 @@
             </Setter.Value>
         </Setter>
     </Style>
- <!--mainwindow 状态指示 -->
+    <!--  mainwindow 状态指示  -->
     <Style x:Key="LedStatus" TargetType="Ellipse">
         <Setter Property="Margin" Value="8" />
         <Setter Property="Stroke" Value="White" />
-        <Setter Property="Fill" Value="Gray"></Setter>
-        <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={ RelativeSource Self}}" />
+        <Setter Property="Fill" Value="Gray" />
+        <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
 
     </Style>
-    <!--mainwindow 状态指示边控 -->
+    <!--  mainwindow 状态指示边控  -->
     <Style x:Key="StatusBorder" TargetType="Border">
         <Setter Property="Background" Value="#4F81BD" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="Margin" Value="3"></Setter>
-        <Setter Property="BorderBrush" Value="Black"></Setter>
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="BorderBrush" Value="Black" />
     </Style>
-    <!--mainwindow grid指示边控 -->
+    <!--  mainwindow grid指示边控  -->
     <Style x:Key="GridBorder" TargetType="Border">
-        <Setter Property="BorderThickness" Value="2 2 1 1" />
-        <Setter Property="BorderBrush" Value="Black"></Setter>
+        <Setter Property="BorderThickness" Value="2,2,1,1" />
+        <Setter Property="BorderBrush" Value="Black" />
     </Style>
 </ResourceDictionary>

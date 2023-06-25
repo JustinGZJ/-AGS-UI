@@ -14,10 +14,13 @@ using Workstation.ServiceModel.Ua;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration.Json;
 using Serilog;
 using SimpleTCP;
 using 比亚迪AGS_WPF.BydMes;
 using 比亚迪AGS_WPF.Services;
+using 比亚迪AGS_WPF.ViewModels;
+using Newtonsoft.Json;
 
 namespace 比亚迪AGS_WPF
 {
@@ -82,7 +85,11 @@ namespace 比亚迪AGS_WPF
             Config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("AppSettings.json", true)
+                .AddJsonFile("Users.json",true)
                 .Build();
+
+
+
             services.AddSingleton<IConfiguration>(Config);
 
             services.AddLogging(logging =>
@@ -97,7 +104,8 @@ namespace 比亚迪AGS_WPF
             services.AddSingleton<MesService>();
             // viewmodels
             services.AddTransient<MainViewModel>();
-
+            services.AddTransient<ConfigViewModel>(); 
+            services.AddTransient<EnquireViewModel>();
             //     services.AddSingleton<TcpServer>();
 
             return services.BuildServiceProvider();

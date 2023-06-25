@@ -10,11 +10,12 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using HandyControl.Tools.Extension;
 using Microsoft.Extensions.Configuration;
-using SimpleTCP;
+using Prism.Commands;
 using Workstation.ServiceModel.Ua;
 using 比亚迪AGS_WPF.Services;
+using 比亚迪AGS_WPF.ViewModels;
+using 比亚迪AGS_WPF.Views;
 
 namespace 比亚迪AGS_WPF;
 
@@ -37,6 +38,14 @@ public class TestLog
 [Subscription(endpointUrl: "MainPLC", publishingInterval: 500, keepAliveCount: 20)]
 public partial class MainViewModel : SubscriptionBase
 {
+    public DelegateCommand<string> _ConfigDialog;
+    public DelegateCommand<string> ConfigDialog =>
+         _ConfigDialog ??= new DelegateCommand<string>(Config_Dialog);//用来打开添加数据库各种模块DeleteProject
+
+    public DelegateCommand<string> _EnquireDialog;
+    public DelegateCommand<string> EnquireDialog =>
+         _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog);//用来打开添加数据库各种模块DeleteProject
+
     public MainViewModel()
     {
         Title = App.Current.Config.GetValue<string>("title");
@@ -102,7 +111,7 @@ public partial class MainViewModel : SubscriptionBase
     {
         // 保存文件
         var fileName = AppDomain.CurrentDomain.BaseDirectory + "Data\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".csv";
-        // 检查目录是否存在
+        // 检查目录是否存在,+ DateTime.Now.ToString("yyyy-MM") +"\\"
         if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Data\\"))
         {
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Data\\");
@@ -132,6 +141,22 @@ public partial class MainViewModel : SubscriptionBase
         File.AppendAllText(fileName, string.Join(",", dictionary.Values) + Environment.NewLine);
     }
 
+    private void Config_Dialog(string obj)
+    {
+        ConfigView popup = new ConfigView();
+        popup.ShowDialog();
+        //DialogParameters keys = new DialogParameters();
+        //keys.Add("Title", SelectedItems);
+        //dialogService.ShowDialog(obj);
+    }
+    private void Enquire_Dialog(string obj)
+    {
+        EnquireView popup = new EnquireView();
+        popup.ShowDialog();
+        //DialogParameters keys = new DialogParameters();
+        //keys.Add("Title", SelectedItems);
+        //dialogService.ShowDialog(obj);
+    }
 
     #region fields
 
