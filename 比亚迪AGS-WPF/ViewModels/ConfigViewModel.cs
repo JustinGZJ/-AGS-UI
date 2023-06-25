@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,7 +44,7 @@ namespace 比亚迪AGS_WPF.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private bool _isEditing;
+        private bool _isEditing=true;
 
         public bool IsEditing
         {
@@ -55,26 +56,30 @@ namespace 比亚迪AGS_WPF.ViewModels
             }
         }
 
-        public ICommand CellEditEndingCommand { get; }
+        public MyDataClass ChangeData { get; set; }
+
+       // public ICommand CellEditEndingCommand { get; }
+
+        public DelegateCommand<string> _EditorCommand;
+        public DelegateCommand<string> EditorCommand =>
+             _EditorCommand ??= new DelegateCommand<string>(Editor);
 
         public ConfigViewModel(IConfiguration configuration)
         {
             MyData = new ObservableCollection<MyDataClass>();
             IConfigurationSection section = configuration.GetSection("UserConfig");
-            config = configuration.GetSection("UserConfig").Get<List<UserConfig>>();
-
-            
+            config = configuration.GetSection("UserConfig").Get<List<UserConfig>>();            
             // 初始化命令
-            CellEditEndingCommand = new RelayCommand<DataGridCellEditEndingEventArgs>(OnCellEditEnding); 
+           // CellEditEndingCommand = new RelayCommand<DataGridCellEditEndingEventArgs>(OnCellEditEnding); 
 
             foreach (var userConfig in config)
             {
-               var jj= kk(userConfig.Value);
-                MyData.Add(new MyDataClass { Column1 = userConfig.Section, Column2 = userConfig.Key, Column3 =jj.SN, Column4=jj.AttachSN });
+               //var jj= kk(userConfig.Value);
+                MyData.Add(new MyDataClass { Column1 = userConfig.Section, Column2 = userConfig.Key, Column3 = userConfig.Value });
             }
 
         }
-
+        // 处理CellEditEnding事件的方法
         private void OnCellEditEnding(DataGridCellEditEndingEventArgs? obj)
         {
             IsEditing = false;
@@ -113,12 +118,17 @@ namespace 比亚迪AGS_WPF.ViewModels
           
         }
 
+        /// <summary>
+        /// Json反序列化
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
         public UserCon kk(string json)
         {
            return JsonConvert.DeserializeObject<UserCon>(json);
         }
 
-        public void SaveCpnfig()
+        public void SaveConfig()
         {
             var config = new
             {
@@ -127,6 +137,11 @@ namespace 比亚迪AGS_WPF.ViewModels
 
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             File.WriteAllText("Users.json", json);
+        }
+
+        private void Editor(string obj)
+        {
+            
         }
     }
  
@@ -145,6 +160,6 @@ namespace 比亚迪AGS_WPF.ViewModels
     
         public string Column3 { get; set; }
 
-        public string Column4 { get; set; }
+        //public string Column4 { get; set; }
     }
 }

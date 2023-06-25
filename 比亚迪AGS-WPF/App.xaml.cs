@@ -89,7 +89,7 @@ namespace 比亚迪AGS_WPF
                 .Build();
 
 
-
+           
             services.AddSingleton<IConfiguration>(Config);
 
             services.AddLogging(logging =>
@@ -106,6 +106,7 @@ namespace 比亚迪AGS_WPF
             services.AddTransient<MainViewModel>();
             services.AddTransient<ConfigViewModel>(); 
             services.AddTransient<EnquireViewModel>();
+            services.AddTransient<TestLogViewModel>();
             //     services.AddSingleton<TcpServer>();
 
             return services.BuildServiceProvider();

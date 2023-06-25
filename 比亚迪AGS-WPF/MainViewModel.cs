@@ -68,6 +68,7 @@ public partial class MainViewModel : SubscriptionBase
         timer.Start();
         WeakReferenceMessenger.Default.Register<TcpStatusMessage>(this,
             (r, m) => { TcpStatus = m.Value ? Brushes.Chartreuse : Brushes.Red; });
+
         WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, ((recipient, message) =>
         {
             var testItems = message.Value.Split('!').Where(x => x.Contains(",")).Select(x =>
@@ -149,7 +150,7 @@ public partial class MainViewModel : SubscriptionBase
     private void Config_Dialog(string obj)
     {
         ConfigView popup = new ConfigView();
-        popup.ShowDialog();
+     //   popup.ShowDialog();
         //DialogParameters keys = new DialogParameters();
         //keys.Add("Title", SelectedItems);
         //dialogService.ShowDialog(obj);
