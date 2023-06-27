@@ -21,6 +21,7 @@ using 比亚迪AGS_WPF.BydMes;
 using 比亚迪AGS_WPF.Services;
 using 比亚迪AGS_WPF.ViewModels;
 using Newtonsoft.Json;
+using 比亚迪AGS_WPF.Views;
 
 namespace 比亚迪AGS_WPF
 {
@@ -106,7 +107,8 @@ namespace 比亚迪AGS_WPF
             services.AddTransient<MainViewModel>();
             services.AddTransient<ConfigViewModel>(); 
             services.AddTransient<EnquireViewModel>();
-            services.AddTransient<TestLogViewModel>();
+            services.AddSingleton<TestLogViewModel>();
+            services.AddTransient<UserViewModel>();
             //     services.AddSingleton<TcpServer>();
 
             return services.BuildServiceProvider();

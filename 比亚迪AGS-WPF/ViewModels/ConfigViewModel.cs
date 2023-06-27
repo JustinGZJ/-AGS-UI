@@ -58,8 +58,8 @@ namespace 比亚迪AGS_WPF.ViewModels
 
         public MyDataClass ChangeData { get; set; }
 
-       // public ICommand CellEditEndingCommand { get; }
-
+        // public ICommand CellEditEndingCommand { get; }            // 初始化命令
+        // CellEditEndingCommand = new RelayCommand<DataGridCellEditEndingEventArgs>(OnCellEditEnding); 
         public DelegateCommand<string> _EditorCommand;
         public DelegateCommand<string> EditorCommand =>
              _EditorCommand ??= new DelegateCommand<string>(Editor);
@@ -69,8 +69,6 @@ namespace 比亚迪AGS_WPF.ViewModels
             MyData = new ObservableCollection<MyDataClass>();
             IConfigurationSection section = configuration.GetSection("UserConfig");
             config = configuration.GetSection("UserConfig").Get<List<UserConfig>>();            
-            // 初始化命令
-           // CellEditEndingCommand = new RelayCommand<DataGridCellEditEndingEventArgs>(OnCellEditEnding); 
 
             foreach (var userConfig in config)
             {
@@ -109,13 +107,6 @@ namespace 比亚迪AGS_WPF.ViewModels
                     }
                 }
             }
-        }
-
-
-        // 处理CellEditEnding事件的方法
-        private void OnCellEditEnding(object parameter, DataGridCellEditEndingEventArgs e)
-        {
-          
         }
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace 比亚迪AGS_WPF.Views
     /// <summary>
     /// EnquireView.xaml 的交互逻辑
     /// </summary>
-    public partial class EnquireView : Window
+    public partial class EnquireView 
     {
         public EnquireView()
         {

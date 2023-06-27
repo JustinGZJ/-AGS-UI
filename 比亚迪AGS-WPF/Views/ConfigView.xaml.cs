@@ -26,12 +26,7 @@ namespace 比亚迪AGS_WPF.Views
         {
             InitializeComponent();
             this.DataContext = App.Current.Services.GetService<ConfigViewModel>();
-            // ConfigDataGrid.ItemsSource = myDataList;
-            //DataGridTextColumn col1 = new DataGridTextColumn();
-            //col1.Header = "Name";
-            //col1.Binding = new Binding("Name");
-            //ConfigDataGrid.Columns.Add(col1);
-
+           
         }
 
         private void myDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)

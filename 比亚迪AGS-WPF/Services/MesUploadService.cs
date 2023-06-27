@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System.Linq;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
 using 比亚迪AGS_WPF.BydMes;
+using 比亚迪AGS_WPF.ViewModels;
 
 namespace 比亚迪AGS_WPF.Services;
 
@@ -11,19 +13,48 @@ public class MesService
     {
         WeakReferenceMessenger.Default.Register<UserLoginMessage>(this, (r, m) =>
         {
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
+            WeakReferenceMessenger.Default.Send(new TestLog()
             {
                 Type = "MES",
                 Log = $"用户登录：{m.CardNo}",
                 Level = "INFO"
             });
-            mes.用户验证(out bool 验证结果, out string mes反馈);
+            if (m.Mode == "MES")
+            {
+                ConfigData<User> userConfig = new ConfigData<User>("user.json");
+                userConfig.Load();
+                var user = userConfig.Data.FirstOrDefault(u => u.CardNumber == m.CardNo.Trim());
+                if (user != null)
+                {
+                    mes.用户验证(user.UserName,user.Password,out bool 验证结果, out string mes反馈);
+                    string cleanText = RemoveHtmlTags(mes反馈);
+                    m.message.ReplyLine(验证结果 ? "Y"+ ";" + cleanText : "N" + ";" + cleanText);
 
-            string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
-
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
+                    WeakReferenceMessenger.Default.Send(new TestLog()
+                        {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});          
+                }
+                else
+                {
+                    m.message.ReplyLine("N" + ";" + "用户不存在");
+                    WeakReferenceMessenger.Default.Send(new TestLog() {Type = "本地", Log = "N" + ";" + "用户不存在", Level = "INFO"});
+                }
+            }
+            else
+            {
+                ConfigData<User> userConfig = new ConfigData<User>("user.json");
+                userConfig.Load();
+                var user = userConfig.Data.FirstOrDefault(u => u.CardNumber == m.CardNo.Trim());
+                if(user!=null)
+                {
+                    m.message.ReplyLine("Y" + ";" + user.UserLevel+";"+user.UserName+";"+user.Password);
+                    WeakReferenceMessenger.Default.Send(new TestLog() {Type = "本地", Log = "Y" + ";" + user.UserLevel, Level = "INFO"});
+                }
+                else
+                {
+                    m.message.ReplyLine("N" + ";" + "用户不存在");
+                    WeakReferenceMessenger.Default.Send(new TestLog() {Type = "本地", Log = "N" + ";" + "用户不存在", Level = "INFO"});
+                }
+            }
         });
         WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, (r, m) =>
         {
@@ -35,16 +66,17 @@ public class MesService
             });
             mes.条码上传(m.Result == "PASS", m.Code, "1.0", "1.0", m.Value, out bool 验证结果, out string mes反馈);
 
-            string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
+            var cleanText = RemoveHtmlTags(mes反馈);
+            m.message.ReplyLine(验证结果 ? 
+                "Y" + ";" + cleanText : 
+                "N" + ";" + cleanText);
 
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"cleanText：{cleanText}", Level = "INFO" });
-
+            WeakReferenceMessenger.Default.Send(new TestLog()
+                {Type = "MES", Log = $"cleanText：{cleanText}", Level = "INFO"});
         });
         WeakReferenceMessenger.Default.Register<CodeVerifyMessage>(this, (r, m) =>
         {
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
+            WeakReferenceMessenger.Default.Send(new TestLog()
             {
                 Type = "MES",
                 Log = $"条码验证：{m.Code}",
@@ -53,14 +85,14 @@ public class MesService
             mes.条码验证(m.Code, out bool 验证结果, out string mes反馈);
 
             string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
+            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
+            WeakReferenceMessenger.Default.Send(new TestLog()
+                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
         });
         WeakReferenceMessenger.Default.Register<AssemblyMessage>(this, (r, m) =>
         {
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
+            WeakReferenceMessenger.Default.Send(new TestLog()
             {
                 Type = "MES",
                 Log = $"离散装配：{m.Code},{string.Join(",", m.PartCodes)}",
@@ -69,14 +101,13 @@ public class MesService
             mes.离散装配(m.Code, m.PartCodes, out bool 验证结果, out string mes反馈);
 
             string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
+            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
+            WeakReferenceMessenger.Default.Send(new TestLog()
+                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
         });
         WeakReferenceMessenger.Default.Register<OrderBindingMessage>(this, (r, m) =>
         {
-
             WeakReferenceMessenger.Default.Send(new TestLog()
             {
                 Type = "MES",
@@ -86,10 +117,10 @@ public class MesService
             mes.工单绑定(m.Order, out bool 验证结果, out string mes反馈);
 
             string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + cleanText);
+            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
             //m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + mes反馈);
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
-            { Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO" });
+            WeakReferenceMessenger.Default.Send(new TestLog()
+                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
         });
     }
 
@@ -101,7 +132,7 @@ public class MesService
         Regex regex = new("<.*?>");
         string resultdeal = regex.Replace(result, "");
         //去除<>
-        Regex regex1 = new(@"\s+");//去除字符串里面的空格和空行
+        Regex regex1 = new(@"\s+"); //去除字符串里面的空格和空行
         return regex1.Replace(resultdeal, "");
     }
 }

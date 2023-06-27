@@ -65,6 +65,7 @@ public partial class MainViewModel : SubscriptionBase
             HeartBeat = !HeartBeat;
             // TcpStatus
         });
+        UiChange("TestLogView");
         timer.Start();
         WeakReferenceMessenger.Default.Register<TcpStatusMessage>(this,
             (r, m) => { TcpStatus = m.Value ? Brushes.Chartreuse : Brushes.Red; });
@@ -149,16 +150,14 @@ public partial class MainViewModel : SubscriptionBase
 
     private void Config_Dialog(string obj)
     {
-        ConfigView popup = new ConfigView();
-     //   popup.ShowDialog();
         //DialogParameters keys = new DialogParameters();
         //keys.Add("Title", SelectedItems);
         //dialogService.ShowDialog(obj);
     }
     private void Enquire_Dialog(string obj)
     {
-        EnquireView popup = new EnquireView();
-        popup.ShowDialog();        
+     //   EnquireView popup = new EnquireView();
+     //   popup.ShowDialog();        
     }
     
     private void UiChange(string obj)
@@ -169,7 +168,10 @@ public partial class MainViewModel : SubscriptionBase
                 Body = new TestLogView();  
                 break;//ConfigView
             case "ConfigView": 
-                Body = new ConfigView(); 
+                Body = new UserView(); 
+                break;
+            case "EnquireView":
+                Body = new EnquireView();
                 break;
         }
     }

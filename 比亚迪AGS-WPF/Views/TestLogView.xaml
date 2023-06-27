@@ -9,25 +9,59 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
-        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TestLogs}">
-            <DataGrid.Columns>
-                <DataGridTextColumn
-                    Width="*"
-                    Binding="{Binding Time}"
-                    Header="时间" />
-                <DataGridTextColumn
-                    Width="*"
-                    Binding="{Binding Type}"
-                    Header="类型" />
-                <DataGridTextColumn
-                    Width="2*"
-                    Binding="{Binding Log}"
-                    Header="消息" />
-                <DataGridTextColumn
-                    Width="*"
-                    Binding="{Binding Level}"
-                    Header="等级" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid x:Name="lbsheet1" Grid.Row="0">
+
+            <DataGrid
+                AutoGenerateColumns="False"
+                FontSize="16"
+                IsReadOnly="True"
+                ItemsSource="{Binding TestItems, Mode=OneWay}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Name}"
+                        Header="名称" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Parameter}"
+                        Header="参数" />
+                    <DataGridTextColumn
+                        Width="2*"
+                        Binding="{Binding Value}"
+                        Header="值" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Result}"
+                        Header="结果" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TestLogs}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Time}"
+                        Header="时间" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Type}"
+                        Header="类型" />
+                    <DataGridTextColumn
+                        Width="2*"
+                        Binding="{Binding Log}"
+                        Header="消息" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Level}"
+                        Header="等级" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
+
 </UserControl>

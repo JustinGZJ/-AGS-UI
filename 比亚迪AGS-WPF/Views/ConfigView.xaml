@@ -12,7 +12,8 @@
     <Grid>
         <DataGrid
             x:Name="ConfigDataGrid"
-            AutoGenerateColumns="True"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
             ItemsSource="{Binding MyData}"
             SelectedItem="{Binding ChangeData, IsAsync=True}">
             <DataGrid.CellStyle>

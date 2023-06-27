@@ -27,6 +27,8 @@ public class UserLoginMessage
 {
     public string Station { get; set; }
     public string CardNo { get; set; }
+
+    public string Mode { get; set; }
     public Message message { get; set; }
 }
 
@@ -143,7 +145,8 @@ public class TcpServerService
                 WeakReferenceMessenger.Default.Send(new UserLoginMessage
                 {
                     Station = splits[0],
-                    CardNo = splits[2],
+                    Mode = splits[2],
+                    CardNo = splits[3],
                     message = e
                 });
                 break;

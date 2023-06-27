@@ -25,8 +25,7 @@
             <Grid x:Name="leftbody" Background="White">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70" />
-                    <RowDefinition Height="3*" />
-                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="6*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid
@@ -128,42 +127,21 @@
                     <Border Grid.Column="0" Style="{StaticResource GridBorder}" />
                     <Border Grid.Column="1" Style="{StaticResource GridBorder}" />
                 </Grid>
-                <Grid x:Name="lbsheet1" Grid.Row="1">
-
-                    <DataGrid
-                        AutoGenerateColumns="False"
-                        FontSize="16"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding TestItems, Mode=OneWay}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding Name}"
-                                Header="名称" />
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding Parameter}"
-                                Header="参数" />
-                            <DataGridTextColumn
-                                Width="2*"
-                                Binding="{Binding Value}"
-                                Header="值" />
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding Result}"
-                                Header="结果" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-                <Grid x:Name="lbsheet2" Grid.Row="2">
+                <Grid x:Name="lbsheet2" Grid.Row="1">
                     <ContentControl x:Name="Text" Content="{Binding Body}">
                         <!--  使用内容呈现器来显示用户控件界面 Content="{Binding Body}" prism:RegionManager.RegionName="ContentRegion"  -->
                     </ContentControl>
                 </Grid>
-                <Grid x:Name="lbbuttons" Grid.Row="3">
+                <Grid x:Name="lbbuttons" Grid.Row="2">
                     <UniformGrid Columns="8">
-                        <Button Style="{StaticResource LbbStyle}">开始运行</Button>
-                        <Button Style="{StaticResource LbbStyle}">停止</Button>
+                        <Button
+                            Command="{Binding OpenCommand}"
+                            CommandParameter="TestLogView"
+                            Style="{StaticResource LbbStyle}">开始运行</Button>
+                        <Button 
+                            Command="{Binding OpenCommand}"
+                            CommandParameter="TestLogView"
+                            Style="{StaticResource LbbStyle}">停止</Button>
                         <Button
                             Command="{Binding OpenCommand}"
                             CommandParameter="TestLogView"
@@ -177,12 +155,15 @@
                             配置信息
                         </Button>
                         <Button
-                            Command="{Binding EnquireDialog}"
+                            Command="{Binding OpenCommand}"
                             CommandParameter="EnquireView"
                             Style="{StaticResource LbbStyle}">
                             数据查询
                         </Button>
-                        <Button Style="{StaticResource LbbStyle}">用户变更</Button>
+                        <Button
+                            Command="{Binding OpenCommand}"
+                            CommandParameter="ConfigView"
+                            Style="{StaticResource LbbStyle}">用户变更</Button>
                         <Button Style="{StaticResource LbbStyle}">遇错忽略</Button>
                         <Button Command="{Binding ExitCommand}" Style="{StaticResource LbbExitStyle}">退出</Button>
                     </UniformGrid>
