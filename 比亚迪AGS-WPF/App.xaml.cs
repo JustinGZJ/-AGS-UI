@@ -100,6 +100,7 @@ namespace 比亚迪AGS_WPF
             });
             services.AddSingleton<IConfiguration>(Config);
             services.AddOptions<BydMesConfig>().Bind(Config.GetSection("BydMesConfig"));
+            
             services.AddSingleton<TcpServerService>();
             services.AddTransient<BydMesCom>();
             services.AddSingleton<MesService>();
@@ -109,6 +110,7 @@ namespace 比亚迪AGS_WPF
             services.AddTransient<EnquireViewModel>();
             services.AddSingleton<TestLogViewModel>();
             services.AddTransient<UserViewModel>();
+            services.AddTransient<ScannerView>();
             //     services.AddSingleton<TcpServer>();
 
             return services.BuildServiceProvider();

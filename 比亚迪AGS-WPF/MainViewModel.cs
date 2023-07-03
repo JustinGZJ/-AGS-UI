@@ -176,6 +176,9 @@ public partial class MainViewModel : SubscriptionBase
             case "EnquireView":
                 Body = new EnquireView();
                 break;
+            case "ScannerView":
+                Body = new ScannerView();
+                break;
         }
     }
 

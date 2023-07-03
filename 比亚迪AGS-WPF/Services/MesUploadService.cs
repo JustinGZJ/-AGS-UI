@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
@@ -26,17 +27,18 @@ public class MesService
                 var user = userConfig.Data.FirstOrDefault(u => u.CardNumber == m.CardNo.Trim());
                 if (user != null)
                 {
-                    mes.用户验证(user.UserName,user.Password,out bool 验证结果, out string mes反馈);
+                    mes.用户验证(user.UserName, user.Password, out bool 验证结果, out string mes反馈);
                     string cleanText = RemoveHtmlTags(mes反馈);
-                    m.message.ReplyLine(验证结果 ? "Y"+ ";" + cleanText : "N" + ";" + cleanText);
+                    m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
                     WeakReferenceMessenger.Default.Send(new TestLog()
-                        {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});          
+                        {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
                 }
                 else
                 {
                     m.message.ReplyLine("N" + ";" + "用户不存在");
-                    WeakReferenceMessenger.Default.Send(new TestLog() {Type = "本地", Log = "N" + ";" + "用户不存在", Level = "INFO"});
+                    WeakReferenceMessenger.Default.Send(new TestLog()
+                        {Type = "本地", Log = "N" + ";" + "用户不存在", Level = "INFO"});
                 }
             }
             else
@@ -44,15 +46,17 @@ public class MesService
                 ConfigData<User> userConfig = new ConfigData<User>("user.json");
                 userConfig.Load();
                 var user = userConfig.Data.FirstOrDefault(u => u.CardNumber == m.CardNo.Trim());
-                if(user!=null)
+                if (user != null)
                 {
-                    m.message.ReplyLine("Y" + ";" + user.UserLevel+";"+user.UserName+";"+user.Password);
-                    WeakReferenceMessenger.Default.Send(new TestLog() {Type = "本地", Log = "Y" + ";" + user.UserLevel, Level = "INFO"});
+                    m.message.ReplyLine("Y" + ";" + user.UserLevel + ";" + user.UserName + ";" + user.Password);
+                    WeakReferenceMessenger.Default.Send(new TestLog()
+                        {Type = "本地", Log = "Y" + ";" + user.UserLevel, Level = "INFO"});
                 }
                 else
                 {
                     m.message.ReplyLine("N" + ";" + "用户不存在");
-                    WeakReferenceMessenger.Default.Send(new TestLog() {Type = "本地", Log = "N" + ";" + "用户不存在", Level = "INFO"});
+                    WeakReferenceMessenger.Default.Send(new TestLog()
+                        {Type = "本地", Log = "N" + ";" + "用户不存在", Level = "INFO"});
                 }
             }
         });
@@ -67,9 +71,7 @@ public class MesService
             mes.条码上传(m.Result == "PASS", m.Code, "1.0", "1.0", m.Value, out bool 验证结果, out string mes反馈);
 
             var cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? 
-                "Y" + ";" + cleanText : 
-                "N" + ";" + cleanText);
+            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
             WeakReferenceMessenger.Default.Send(new TestLog()
                 {Type = "MES", Log = $"cleanText：{cleanText}", Level = "INFO"});
@@ -133,6 +135,7 @@ public class MesService
         string resultdeal = regex.Replace(result, "");
         //去除<>
         Regex regex1 = new(@"\s+"); //去除字符串里面的空格和空行
-        return regex1.Replace(resultdeal, "");
+        var input = regex1.Replace(resultdeal, "");
+        return input.Substring(input.IndexOf("Returninfo", StringComparison.Ordinal) + "Returninfo".Length).Trim();
     }
 }
