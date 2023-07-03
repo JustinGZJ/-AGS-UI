@@ -3,17 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:比亚迪AGS_WPF.Services"
-             xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
+             xmlns:比亚迪agsWpf="clr-namespace:比亚迪AGS_WPF"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance viewModels:ScannerViewModel}"
+             d:DataContext="{d:DesignInstance 比亚迪agsWpf:MainViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock Text="人工扫码" HorizontalAlignment="Center" FontSize="30"></TextBlock>
-        <TextBox Text="{Binding PcScan}" Width="300"></TextBox>
-        <Button Width="300"  
-                Background="{Binding PcScanDone, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}, 
-                ConverterParameter=Chartreuse}" 
-                Command="{Binding ScanDoneCommand}">确认</Button>
+        <TextBox Text="{Binding PCScan,UpdateSourceTrigger=PropertyChanged}" Width="300">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding ScanDoneCommand}" />
+            </TextBox.InputBindings>
+        </TextBox>
+    
+        <Button Width="300"
+                Background="{Binding PCScanDone, Mode=OneWay, Converter={StaticResource BoolToBrushConverter},
+                ConverterParameter=Chartreuse}"
+                Command="{Binding ScanDoneCommand  }">确认</Button>
     </StackPanel>
 </UserControl>

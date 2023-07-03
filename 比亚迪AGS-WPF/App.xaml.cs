@@ -105,7 +105,7 @@ namespace 比亚迪AGS_WPF
             services.AddTransient<BydMesCom>();
             services.AddSingleton<MesService>();
             // viewmodels
-            services.AddTransient<MainViewModel>();
+            services.AddSingleton<MainViewModel>();
             services.AddTransient<ConfigViewModel>(); 
             services.AddTransient<EnquireViewModel>();
             services.AddSingleton<TestLogViewModel>();

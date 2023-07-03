@@ -39,16 +39,19 @@ public class TestLog
 public partial class MainViewModel : SubscriptionBase
 {
     public DelegateCommand<string> _ConfigDialog;
+
     public DelegateCommand<string> ConfigDialog =>
-         _ConfigDialog ??= new DelegateCommand<string>(Config_Dialog);//用来打开添加数据库各种模块DeleteProject
+        _ConfigDialog ??= new DelegateCommand<string>(Config_Dialog); //用来打开添加数据库各种模块DeleteProject
 
     public DelegateCommand<string> _EnquireDialog;
+
     public DelegateCommand<string> EnquireDialog =>
-         _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog);//用来打开添加数据库各种模块DeleteProject
+        _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog); //用来打开添加数据库各种模块DeleteProject
 
     public DelegateCommand<string> _OpenCommand;
+
     public DelegateCommand<string> OpenCommand =>
-         _OpenCommand ??= new DelegateCommand<string>(UiChange);//用来打开添加数据库各种模块DeleteProject
+        _OpenCommand ??= new DelegateCommand<string>(UiChange); //用来打开添加数据库各种模块DeleteProject
 
     public MainViewModel()
     {
@@ -85,7 +88,7 @@ public partial class MainViewModel : SubscriptionBase
             });
             // 保存文件
             SaveFile(message, testItems);
-            
+
             // 刷新界面
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -113,6 +116,7 @@ public partial class MainViewModel : SubscriptionBase
             });
         }));
     }
+
 
     private static void SaveFile(DataUploadMessage message, IEnumerable<TestItem> testItems)
     {
@@ -154,21 +158,22 @@ public partial class MainViewModel : SubscriptionBase
         //keys.Add("Title", SelectedItems);
         //dialogService.ShowDialog(obj);
     }
+
     private void Enquire_Dialog(string obj)
     {
-     //   EnquireView popup = new EnquireView();
-     //   popup.ShowDialog();        
+        //   EnquireView popup = new EnquireView();
+        //   popup.ShowDialog();        
     }
-    
+
     private void UiChange(string obj)
     {
         switch (obj)
         {
-             case "TestLogView":
-                Body = new TestLogView();  
-                break;//ConfigView
-            case "UserView": 
-                Body = new UserView(); 
+            case "TestLogView":
+                Body = new TestLogView();
+                break; //ConfigView
+            case "UserView":
+                Body = new UserView();
                 break;
             case "ConfigView":
                 Body = new ConfigView();
@@ -210,6 +215,8 @@ public partial class MainViewModel : SubscriptionBase
     private int _productTime;
     private Object body;
     private bool _hartBeat;
+    private string _pcScan;
+    private bool _pcScanDone;
 
     #endregion
 
@@ -256,6 +263,29 @@ public partial class MainViewModel : SubscriptionBase
 
 
     /// <summary>
+    /// PC扫码
+    /// </summary>
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.PC扫码")]
+    public string PCScan
+    {
+        get => _pcScan;
+        set => SetProperty(ref _pcScan, value);
+    }
+
+    /// <summary>
+    /// PC扫码完成
+    /// </summary>
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.PC扫码完成")]
+    public bool PCScanDone
+    {
+        get => _pcScanDone;
+        set => SetProperty(ref _pcScanDone, value);
+    }
+
+
+    /// <summary>
     /// 机器人状态
     /// </summary>
 
@@ -286,6 +316,12 @@ public partial class MainViewModel : SubscriptionBase
     {
         get => _productStatus;
         set => SetProperty(ref _productStatus, value);
+    }
+
+    [RelayCommand]
+    public void ScanDone()
+    {
+        this.PCScanDone = !this.PCScanDone;
     }
 
 
@@ -503,10 +539,7 @@ public partial class MainViewModel : SubscriptionBase
     public Object Body
     {
         get => body;
-        set
-        {
-            SetProperty(ref this.body, value);
-        }
+        set { SetProperty(ref this.body, value); }
     }
 
     /// <summary>
