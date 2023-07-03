@@ -162,7 +162,7 @@
                         </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="ConfigView"
+                            CommandParameter="UserView"
                             Style="{StaticResource LbbStyle}">用户变更</Button>
                         <Button Style="{StaticResource LbbStyle}">遇错忽略</Button>
                         <Button Command="{Binding ExitCommand}" Style="{StaticResource LbbExitStyle}">退出</Button>

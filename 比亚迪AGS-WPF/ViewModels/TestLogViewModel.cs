@@ -63,9 +63,9 @@ namespace 比亚迪AGS_WPF.ViewModels
                 };
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    TestLogs.Insert(0, log);
-                    if (TestLogs.Count >= 200)
-                        TestLogs.RemoveAt(TestLogs.Count - 1);
+                    TestLogs.Add(log);
+                    if(TestLogs.Count>=200)
+                        TestLogs.RemoveAt(TestLogs.Count-1);
                 });
             }));
         }

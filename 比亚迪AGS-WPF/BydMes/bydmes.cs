@@ -22,11 +22,10 @@ public class BydMesCom
     private string NcCode;
     private int TimeOut;
 
-    public BydMesCom(IOptions<BydMesConfig>  configOptions, IOptions<List<UserConfig>> User_config, ILogger<BydMesCom> logger)
+    public BydMesCom(IOptions<BydMesConfig>  configOptions, ILogger<BydMesCom> logger)
     {
         _logger = logger;
         config=configOptions.Value;
-        Global.user_config = User_config.Value;
         URL = config.Url;
         Site = config.Site;
         UserName = config.UserName;

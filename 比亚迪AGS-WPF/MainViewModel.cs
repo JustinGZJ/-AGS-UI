@@ -167,8 +167,11 @@ public partial class MainViewModel : SubscriptionBase
              case "TestLogView":
                 Body = new TestLogView();  
                 break;//ConfigView
-            case "ConfigView": 
+            case "UserView": 
                 Body = new UserView(); 
+                break;
+            case "ConfigView":
+                Body = new ConfigView();
                 break;
             case "EnquireView":
                 Body = new EnquireView();
