@@ -48,7 +48,7 @@ public class MesService
                 var user = userConfig.Data.FirstOrDefault(u => u.CardNumber == m.CardNo.Trim());
                 if (user != null)
                 {
-                    m.message.ReplyLine("Y" + ";" + user.UserLevel + ";" + user.UserName + ";" + user.Password);
+                    m.message.ReplyLine("Y" + ";" + user.UserLevel );
                     WeakReferenceMessenger.Default.Send(new TestLog()
                         {Type = "本地", Log = "Y" + ";" + user.UserLevel, Level = "INFO"});
                 }
