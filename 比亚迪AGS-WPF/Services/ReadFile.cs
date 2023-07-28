@@ -49,41 +49,14 @@ namespace 比亚迪AGS_WPF.Services
             dataTable.Locale = CultureInfo.InvariantCulture;
             return dataTable;
         }
-
-      
-
-        public static List<MyData> ReadCsvFile1(string filePath)
-        {
-            List<MyData> dataList = new List<MyData>();
-           // File.ReadAllLines(filePath, Encoding.Default);//str1[2].Split(',');
-            using (var reader = new StreamReader(filePath))
-            {
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-                    var values = line.Split(',');
-
-                    MyData data = new MyData()
-                    {
-                        Column1 = values[0],
-                        Column2 = values[1],
-                        Column3 = values[2]
-                    };
-
-                    dataList.Add(data);
-                }
-            }
-
-            return dataList;
-        }
+        
 
 
         public static ObservableCollection<FileSystemItem>  GetCsvFiles(string folderPath)
         {
             ObservableCollection<FileSystemItem> folderList = new ObservableCollection<FileSystemItem>();
             List<string> filess = new List<string>();
-
-            string path = @"X:\XXX\XX";
+            
             DirectoryInfo root = new DirectoryInfo(folderPath);
             string[] files = Directory.GetFiles(folderPath, "*.csv");
             foreach (FileInfo f in root.GetFiles())
@@ -97,7 +70,6 @@ namespace 比亚迪AGS_WPF.Services
             
             foreach (FileInfo file in folder.GetFiles("*.csv"))
             {
-                List<MyData> dataList = ReadCsvFile1(file.FullName);
 
                 folderList.Add(new FileSystemItem()
                 {
