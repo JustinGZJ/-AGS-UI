@@ -39,8 +39,9 @@ namespace 比亚迪AGS_WPF.ViewModels
                         Result = message.Result
                     };
                 });
+                
                 // 保存文件
-                SaveFile(message, testItems);
+               // SaveFile(message, testItems);
 
                 // 刷新界面
                 Application.Current.Dispatcher.Invoke(() =>
@@ -86,7 +87,9 @@ namespace 比亚迪AGS_WPF.ViewModels
             var dictionary = new Dictionary<string, string>();
             dictionary.Add("时间", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             dictionary.Add("站位", message.Station);
+            dictionary.Add("条码", message.Code);
             dictionary.Add("结果", message.Result);
+     
             foreach (var item in testItems)
             {
                 dictionary.TryAdd(item.Name, item.Value);

@@ -48,7 +48,7 @@ public class MesService
                 var user = userConfig.Data.FirstOrDefault(u => u.CardNumber == m.CardNo.Trim());
                 if (user != null)
                 {
-                    m.message.ReplyLine("Y" + ";" + user.UserLevel );
+                    m.message.ReplyLine("Y" + ";" + user.UserLevel);
                     WeakReferenceMessenger.Default.Send(new TestLog()
                         {Type = "本地", Log = "Y" + ";" + user.UserLevel, Level = "INFO"});
                 }
@@ -74,7 +74,7 @@ public class MesService
             m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
             WeakReferenceMessenger.Default.Send(new TestLog()
-                {Type = "MES", Log = $"cleanText：{cleanText}", Level = "INFO"});
+                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
         });
         WeakReferenceMessenger.Default.Register<CodeVerifyMessage>(this, (r, m) =>
         {
@@ -136,6 +136,8 @@ public class MesService
         //去除<>
         Regex regex1 = new(@"\s+"); //去除字符串里面的空格和空行
         var input = regex1.Replace(resultdeal, "");
-        return input.Substring(input.IndexOf("Returninfo", StringComparison.Ordinal) + "Returninfo".Length).Trim();
+        if (input.Contains("Returninfo"))
+            return input.Substring(input.IndexOf("Returninfo", StringComparison.Ordinal) + "Returninfo".Length).Trim();
+        return input;
     }
 }

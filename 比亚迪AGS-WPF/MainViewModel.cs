@@ -132,10 +132,11 @@ public partial class MainViewModel : SubscriptionBase
         var dictionary = new Dictionary<string, string>();
         dictionary.Add("时间", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         dictionary.Add("站位", message.Station);
+        dictionary.Add("识别码",message.Code);
         dictionary.Add("结果", message.Result);
         foreach (var item in testItems)
         {
-            dictionary.TryAdd(item.Name, item.Value);
+            dictionary.TryAdd(item.Name, item.Value.Trim());
         }
 
         // 把dictionary内的数据追加到文件，如果文件不存在则追加表头
