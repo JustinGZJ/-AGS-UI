@@ -339,10 +339,12 @@
                         Grid.Column="1"
                         BorderBrush="Black"
                         BorderThickness="1">
+                        <!-- 这里的Text属性绑定的是RunningStatus  运行 显示绿色，停止 显示红色，暂停 显示灰色，报警 显示黄色  -->
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="24"
+                            Foreground="{Binding RunningStatus, Converter={StaticResource RunningStatusColorConverter}}"
                             Text="{Binding RunningStatus}"
                             TextWrapping="WrapWithOverflow" />
                     </Border>
@@ -395,7 +397,8 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="24"
+                            Foreground="{Binding ProductStatus, Converter={StaticResource TestResultColorConverter}}"
                             Text="{Binding ProductStatus}"
                             TextWrapping="WrapWithOverflow" />
                     </Border>

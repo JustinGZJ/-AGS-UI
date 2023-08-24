@@ -200,7 +200,7 @@ public partial class MainViewModel : SubscriptionBase
     private string _productCode = "产品代码";
     private string _fixtureBinding = "01";
     private string _productName = "产品1";
-    private string _runningStatus = "设备正在进行那个项目，哪那里有异常信息以及MES状态反调等在本栏显示，便问题的处理";
+    private string _runningStatus = "运行";
     private string _operationPrompt = "操作提示";
     private int _totalCount = 0;
     private int _maintenance;
@@ -212,7 +212,7 @@ public partial class MainViewModel : SubscriptionBase
     private Brush _tcpStatus = Brushes.Gray;
     private bool _robotStatus;
     private bool _alarmStatus;
-    private string _productStatus;
+    private string _productStatus="OK";
     private int _productTime;
     private Object body;
     private bool _hartBeat;
