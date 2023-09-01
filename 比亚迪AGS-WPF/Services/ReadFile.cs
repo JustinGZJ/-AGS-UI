@@ -12,16 +12,13 @@ using System.Globalization;
 
 namespace 比亚迪AGS_WPF.Services
 {
-
-   
-
-   public static class ReadFile 
-   {
+    public static class ReadFile
+    {
         public static DataTable ReadCsvFile(string filePath)
         {
             DataTable dataTable = new DataTable();
 
-            using (TextFieldParser parser = new TextFieldParser(filePath, Encoding.GetEncoding("GB2312")))
+            using (TextFieldParser parser = new TextFieldParser(filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -37,44 +34,48 @@ namespace 比亚迪AGS_WPF.Services
                         {
                             dataTable.Columns.Add(field);
                         }
+
                         isFirstRow = false;
                     }
                     else
                     {
+                        while (dataTable.Columns.Count < fields.Length)
+                        {
+                            dataTable.Columns.Add("");
+                        }
                         dataTable.Rows.Add(fields);
                     }
                 }
             }
+
             // 设置 Locale 属性以避免在 UI 界面上显示乱码
             dataTable.Locale = CultureInfo.InvariantCulture;
             return dataTable;
         }
-        
 
 
-        public static ObservableCollection<FileSystemItem>  GetCsvFiles(string folderPath)
+        public static ObservableCollection<FileSystemItem> GetCsvFiles(string folderPath)
         {
             ObservableCollection<FileSystemItem> folderList = new ObservableCollection<FileSystemItem>();
             List<string> filess = new List<string>();
-            
+
             DirectoryInfo root = new DirectoryInfo(folderPath);
             string[] files = Directory.GetFiles(folderPath, "*.csv");
             foreach (FileInfo f in root.GetFiles())
             {
-                 filess.Add(f.Name);
+                filess.Add(f.Name);
                 filess.Add(f.FullName);
                 //string fullName = f.FullName;
             }
 
             DirectoryInfo folder = new DirectoryInfo(folderPath);
-            
+
             foreach (FileInfo file in folder.GetFiles("*.csv"))
             {
-
                 folderList.Add(new FileSystemItem()
                 {
                     Name = file.Name,
-                    Path= file.FullName,
+                    Path = file.FullName,
                     Type = "csv",
                 });
             }
@@ -82,5 +83,4 @@ namespace 比亚迪AGS_WPF.Services
             return folderList;
         }
     }
-   
 }

@@ -71,44 +71,6 @@ namespace 比亚迪AGS_WPF.ViewModels
             }));
         }
 
-
-        private static void SaveFile(DataUploadMessage message, IEnumerable<TestItem> testItems)
-        {
-            // 保存文件
-            var fileName = Path.Combine( 
-                AppDomain.CurrentDomain.BaseDirectory ,
-                "Data", 
-                DateTime.Now.ToString("yyyy-MM-dd") + ".csv");
-            // 检查目录是否存在,+ DateTime.Now.ToString("yyyy-MM") +"\\"
-            if (!Directory.Exists(Path.Combine( AppDomain.CurrentDomain.BaseDirectory , "Data")))
-            {
-                Directory.CreateDirectory(Path.Combine( AppDomain.CurrentDomain.BaseDirectory , "Data"));
-            }
-
-            // 把数据放如dictionary
-            var dictionary = new Dictionary<string, string>();
-            dictionary.Add("时间", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            dictionary.Add("站位", message.Station);
-            dictionary.Add("条码", message.Code);
-            dictionary.Add("结果", message.Result);
-     
-            foreach (var item in testItems)
-            {
-                dictionary.TryAdd(item.Name, item.Value);
-            }
-
-            // 把dictionary内的数据追加到文件，如果文件不存在则追加表头
-            //检查文件是否存在
-            var fileExists = File.Exists(fileName);
-            var header = string.Join(",", dictionary.Keys);
-            //添加表头到文件
-            if (!fileExists)
-            {
-                File.WriteAllText(fileName, header + Environment.NewLine);
-            }
-
-            //将数据追加到文件
-            File.AppendAllText(fileName, string.Join(",", dictionary.Values) + Environment.NewLine);
-        }
+        
     }
 }
