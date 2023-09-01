@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using 比亚迪AGS_WPF.Services;
 using 比亚迪AGS_WPF.ViewModels;
+using Path = System.IO.Path;
 
 namespace 比亚迪AGS_WPF.Views
 {
@@ -28,8 +29,8 @@ namespace 比亚迪AGS_WPF.Views
         public EnquireView()
         {
             InitializeComponent();
-            this.DataContext = App.Current.Services.GetService<EnquireViewModel>();
-            string folderPath = "./Data";
+            DataContext = App.Current.Services.GetService<EnquireViewModel>();
+            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             ObservableCollection<FileSystemItem> folderList = ReadFile.GetCsvFiles(folderPath);
 
             myTreeView.ItemsSource = folderList;

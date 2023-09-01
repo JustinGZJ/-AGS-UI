@@ -75,12 +75,14 @@ namespace 比亚迪AGS_WPF.ViewModels
         private static void SaveFile(DataUploadMessage message, IEnumerable<TestItem> testItems)
         {
             // 保存文件
-            var fileName = AppDomain.CurrentDomain.BaseDirectory + "Data\\" + DateTime.Now.ToString("yyyy-MM-dd") +
-                           ".csv";
+            var fileName = Path.Combine( 
+                AppDomain.CurrentDomain.BaseDirectory ,
+                "Data", 
+                DateTime.Now.ToString("yyyy-MM-dd") + ".csv");
             // 检查目录是否存在,+ DateTime.Now.ToString("yyyy-MM") +"\\"
-            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Data\\"))
+            if (!Directory.Exists(Path.Combine( AppDomain.CurrentDomain.BaseDirectory , "Data")))
             {
-                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Data\\");
+                Directory.CreateDirectory(Path.Combine( AppDomain.CurrentDomain.BaseDirectory , "Data"));
             }
 
             // 把数据放如dictionary

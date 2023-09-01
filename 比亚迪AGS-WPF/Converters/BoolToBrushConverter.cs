@@ -20,6 +20,8 @@ public class RunningStatusColorConverter : IValueConverter
             case "停止":
                 return Brushes.Red;
             case "报警":
+                return Brushes.Red;
+            case "待机":
                 return Brushes.Gold;
             case "未知":
                 return Brushes.Gray;

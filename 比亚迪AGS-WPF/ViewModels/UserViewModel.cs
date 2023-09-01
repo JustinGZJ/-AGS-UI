@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -26,7 +28,7 @@ public partial class UserViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(DeleteUserCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpdateUserCommand))]
     private User _selectedUser;
-    ConfigData<User> userConfig = new ConfigData<User>("user.json");
+    ConfigData<User> userConfig = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory ,"user.json"));
     
     public UserViewModel()
     {
