@@ -218,6 +218,8 @@ public partial class MainViewModel : SubscriptionBase
     private bool _hartBeat;
     private string _pcScan;
     private bool _pcScanDone;
+    private int _cycleTime;
+    private int _lastCycleTime;
 
     #endregion
 
@@ -522,6 +524,27 @@ public partial class MainViewModel : SubscriptionBase
             NotifyPropertyChanged(nameof(YieldRate));
         }
     }
+    
+    [MonitoredItem(nodeId:"ns=4;s=MES_交互.周期时间")]
+    public int CycleTime
+    {
+        get => _cycleTime;
+        set
+        {
+            SetProperty(ref this._cycleTime, value);
+        }
+    }
+    
+    [MonitoredItem(nodeId:"ns=4;s=MES_交互.上一次周期")]
+    public int LastCycleTime
+    {
+        get => _lastCycleTime;
+        set
+        {
+            SetProperty(ref this._lastCycleTime, value);
+        }
+    }
+    
 
     /// <summary>
     /// 合格数
@@ -546,7 +569,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 合格率
     /// </summary>
-    public string YieldRate => _totalCount > 0 ? (_okQty * 1.0 / _totalCount).ToString("P2") : 0.ToString("P2");
+    public string YieldRate => _completeQty > 0 ? (_okQty * 1.0 / _completeQty).ToString("P2") : 0.ToString("P2");
 
     /// <summary>
     /// 当前时间

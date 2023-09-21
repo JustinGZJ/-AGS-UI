@@ -436,43 +436,43 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
+                            <!-- <Border -->
+                            <!--     Grid.Row="0" -->
+                            <!--     Grid.Column="0" -->
+                            <!--     BorderBrush="Black" -->
+                            <!--     BorderThickness="0,0,1,1"> -->
+                            <!--     <TextBlock>总次数</TextBlock> -->
+                            <!-- </Border> -->
+                            <!-- <Border -->
+                            <!--     Grid.Row="0" -->
+                            <!--     Grid.Column="1" -->
+                            <!--     BorderBrush="Black" -->
+                            <!--     BorderThickness="0,0,1,1"> -->
+                            <!--     <TextBlock Text="{Binding TotalCount}" /> -->
+                            <!-- </Border> -->
                             <Border
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
-                                <TextBlock>总次数</TextBlock>
+                                <TextBlock>周期时间</TextBlock>
                             </Border>
                             <Border
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding TotalCount}" />
+                                <TextBlock Text="{Binding CycleTime}" />
                             </Border>
                             <Border
                                 Grid.Row="1"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>保养计数</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding Maintenance}" />
-                            </Border>
-                            <Border
-                                Grid.Row="2"
                                 Grid.Column="0"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock>工单数量</TextBlock>
                             </Border>
                             <Border
-                                Grid.Row="2"
+                                Grid.Row="1"
                                 Grid.Column="1"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
@@ -480,60 +480,60 @@
                             </Border>
 
                             <Border
-                                Grid.Row="3"
+                                Grid.Row="2"
                                 Grid.Column="0"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock>完成数</TextBlock>
                             </Border>
                             <Border
-                                Grid.Row="3"
+                                Grid.Row="2"
                                 Grid.Column="1"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock Text="{Binding CompleteQty}" />
                             </Border>
                             <Border
-                                Grid.Row="4"
+                                Grid.Row="3"
                                 Grid.Column="0"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock>合格数</TextBlock>
                             </Border>
                             <Border
-                                Grid.Row="4"
+                                Grid.Row="3"
                                 Grid.Column="1"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock Text="{Binding OkQty}" />
                             </Border>
                             <Border
-                                Grid.Row="5"
+                                Grid.Row="4"
                                 Grid.Column="0"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock>合格率</TextBlock>
                             </Border>
                             <Border
-                                Grid.Row="5"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                                 <TextBlock Text="{Binding YieldRate}" />
                             </Border>
                             <Border
-                                Grid.Row="6"
+                                Grid.Row="5"
                                 Grid.Column="0"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
-                                <TextBlock>生产时间</TextBlock>
+                                <TextBlock>上一次周期</TextBlock>
                             </Border>
                             <Border
-                                Grid.Row="6"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding ProductTime}" />
+                                <TextBlock Text="{Binding LastCycleTime}" />
                             </Border>
 
                         </Grid>
