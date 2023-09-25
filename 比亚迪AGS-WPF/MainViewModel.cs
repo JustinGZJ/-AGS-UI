@@ -168,24 +168,18 @@ public partial class MainViewModel : SubscriptionBase
 
     private void UiChange(string obj)
     {
-        switch (obj)
+        Body = obj switch
         {
-            case "TestLogView":
-                Body = new TestLogView();
-                break; //ConfigView
-            case "UserView":
-                Body = new UserView();
-                break;
-            case "ConfigView":
-                Body = new ConfigView();
-                break;
-            case "EnquireView":
-                Body = new EnquireView();
-                break;
-            case "ScannerView":
-                Body = new ScannerView();
-                break;
-        }
+            "TestLogView" => new TestLogView()
+            {
+                DataContext = this
+            },
+            "UserView" => new UserView(),
+            "ConfigView" => new ConfigView(),
+            "EnquireView" => new EnquireView(),
+            "ScannerView" => new ScannerView(),
+            _ => Body
+        };
     }
 
     #region fields
@@ -539,10 +533,7 @@ public partial class MainViewModel : SubscriptionBase
     public int LastCycleTime
     {
         get => _lastCycleTime;
-        set
-        {
-            SetProperty(ref this._lastCycleTime, value);
-        }
+        set => SetProperty(ref this._lastCycleTime, value);
     }
     
 
