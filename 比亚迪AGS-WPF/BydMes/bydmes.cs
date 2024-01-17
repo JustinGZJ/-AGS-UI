@@ -22,11 +22,10 @@ public class BydMesCom
     private string NcCode;
     private int TimeOut;
 
-    public BydMesCom(IOptions<BydMesConfig>  configOptions, IOptions<List<UserConfig>> User_config, ILogger<BydMesCom> logger)
+    public BydMesCom(IOptions<BydMesConfig>  configOptions, ILogger<BydMesCom> logger)
     {
         _logger = logger;
         config=configOptions.Value;
-        Global.user_config = User_config.Value;
         URL = config.Url;
         Site = config.Site;
         UserName = config.UserName;
@@ -37,11 +36,11 @@ public class BydMesCom
         TimeOut = config.TimeOut;
     }
 
-    public void 用户验证(out bool 验证结果, out string MES反馈)
+    public void 用户验证(string userName,string password,out bool 验证结果, out string MES反馈)
     {
         MES反馈 = GetHtmlByPost(URL,
-            "&message=<PRODUCTION_REQUEST><USER><SITE>" + Site + "</SITE><NAME>" + UserName + "</NAME><PWD>" +
-            Password + "</PWD></USER></PRODUCTION_REQUEST>", TimeOut);
+            "&message=<PRODUCTION_REQUEST><USER><SITE>" + Site + "</SITE><NAME>" + userName + "</NAME><PWD>" +
+            password + "</PWD></USER></PRODUCTION_REQUEST>", TimeOut);
         验证结果 = CutResult(MES反馈);
     }
 

@@ -25,7 +25,7 @@ namespace 比亚迪AGS_WPF.Views
         public TestLogView()
         {
             InitializeComponent();
-            this.DataContext = App.Current.Services.GetService<TestLogViewModel>();
+           // this.DataContext = App.Current.Services.GetService<MainViewModel>();
         }
     }
 }

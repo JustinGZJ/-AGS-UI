@@ -3,51 +3,85 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:local="clr-namespace:比亚迪AGS_WPF.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    d:DataContext="{d:DesignInstance Type=viewModels:ConfigViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
-    <Grid>
-        <DataGrid
-            x:Name="ConfigDataGrid"
-            AutoGenerateColumns="True"
-            ItemsSource="{Binding MyData}"
-            SelectedItem="{Binding ChangeData, IsAsync=True}">
-            <DataGrid.CellStyle>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="IsEditing" Value="{Binding IsEditing, Mode=TwoWay}" />
-                </Style>
-            </DataGrid.CellStyle>
-            <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="CellEditEnding">
-                    <i:InvokeCommandAction Command="{Binding CellEditEndingCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>-->
+    <StackPanel >
+        <Button HorizontalAlignment="Right" Style="{StaticResource ButtonPrimary}" Margin="5px"
+                Command="{Binding SaveCommand}">
+            保存
+        </Button>
+        <WrapPanel DataContext="{Binding Config}">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Title:</TextBlock>
+                <TextBox Text="{Binding Title}" Width="300" />
+            </StackPanel>
+   
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Version:</TextBlock>
+                <TextBox Text="{Binding Version}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">ServerPort:</TextBlock>
+                <TextBox Text="{Binding ServerPort}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">PhoneNumber:</TextBlock>
+                <TextBox Text="{Binding PhoneNumber}" Width="300" />
+            </StackPanel>
+        </WrapPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock VerticalAlignment="Center" Width="70">OPC:</TextBlock>
+            <TextBox Text="{Binding OpcEndpoint.EndpointUrl}" Width="300" />
+        </StackPanel>
+        <WrapPanel DataContext="{Binding MesConfig}">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Url:</TextBlock>
+                <TextBox Text="{Binding Url}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Site</TextBlock>
+                <TextBox Text="{Binding Site}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">UserName</TextBlock>
+                <TextBox Text="{Binding UserName}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Password</TextBlock>
+                <TextBox Text="{Binding Password}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Resource</TextBlock>
+                <TextBox Text="{Binding Resource}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">Operation</TextBlock>
+                <TextBox Text="{Binding Operation}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">NcCode</TextBlock>
+                <TextBox Text="{Binding NcCode}" Width="300" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock VerticalAlignment="Center" Width="70">TimeOut</TextBlock>
+                <TextBox Text="{Binding TimeOut}" Width="300" />
+            </StackPanel>
 
+        </WrapPanel>
+        <DataGrid ItemsSource="{Binding MesConfig.IdentifierObject}" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Column1}" Header="Section" />
-                <DataGridTextColumn Binding="{Binding Column2}" Header="Key" />
-                <DataGridTextColumn Binding="{Binding Column3}" Header="Value" />
-
-                <DataGridTemplateColumn Width="100" Header="操作">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="2">
-                                <Button
-                                    Height="30"
-                                    Command="{Binding EditorCommand}"
-                                    FontSize="12">
-                                    编辑
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
+                <DataGridTextColumn Header="物料号" Binding="{Binding Identifier}" />
+                <DataGridTextColumn Header="版本号" Binding="{Binding Revision}" />
+                <DataGridTextColumn Header="数量" Binding="{Binding Qty}" />
+                <DataGridTextColumn Header="工单来源" Binding="{Binding AssyDataValues.DataField}" />
+                <!-- <DataGridTextColumn Header="DataAttr" Binding="{Binding AssyDataValues.DataAttr}" /> -->
             </DataGrid.Columns>
-
         </DataGrid>
-    </Grid>
+
+    </StackPanel>
+
 </UserControl>

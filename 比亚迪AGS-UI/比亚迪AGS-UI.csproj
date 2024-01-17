@@ -14,4 +14,44 @@
       <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="6.0.552" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Authorization.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Components.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Components.Forms.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Components.Web.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Components.WebView.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Components.WebView.Wpf.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.AspNetCore.Metadata.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Configuration.Binder.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Configuration.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Configuration.FileExtensions.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Configuration.Json.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.DependencyInjection.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.FileProviders.Abstractions.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.FileProviders.Composite.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.FileProviders.Embedded.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.FileProviders.Physical.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.FileSystemGlobbing.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Logging.Abstractions.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Logging.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Options.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Extensions.Primitives.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.JSInterop.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Web.WebView2.Core.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Web.WebView2.WinForms.dll" />
+      <Content Include="bin\Debug\net6.0-windows\Microsoft.Web.WebView2.Wpf.dll" />
+      <Content Include="bin\Debug\net6.0-windows\runtimes\win-arm64\native\WebView2Loader.dll" />
+      <Content Include="bin\Debug\net6.0-windows\runtimes\win-x64\native\WebView2Loader.dll" />
+      <Content Include="bin\Debug\net6.0-windows\runtimes\win-x86\native\WebView2Loader.dll" />
+      <Content Include="bin\Debug\net6.0-windows\System.IO.Pipelines.dll" />
+      <Content Include="bin\Debug\net6.0-windows\比亚迪AGS-UI.deps.json" />
+      <Content Include="bin\Debug\net6.0-windows\比亚迪AGS-UI.dll" />
+      <Content Include="bin\Debug\net6.0-windows\比亚迪AGS-UI.exe" />
+      <Content Include="bin\Debug\net6.0-windows\比亚迪AGS-UI.pdb" />
+      <Content Include="bin\Debug\net6.0-windows\比亚迪AGS-UI.runtimeconfig.json" />
+      <Content Include="bin\Debug\net6.0-windows\比亚迪AGS-UI.staticwebassets.runtime.json" />
+    </ItemGroup>
+
 </Project>

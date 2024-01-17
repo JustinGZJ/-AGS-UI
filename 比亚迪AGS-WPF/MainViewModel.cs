@@ -39,16 +39,19 @@ public class TestLog
 public partial class MainViewModel : SubscriptionBase
 {
     public DelegateCommand<string> _ConfigDialog;
+
     public DelegateCommand<string> ConfigDialog =>
-         _ConfigDialog ??= new DelegateCommand<string>(Config_Dialog);//用来打开添加数据库各种模块DeleteProject
+        _ConfigDialog ??= new DelegateCommand<string>(Config_Dialog); //用来打开添加数据库各种模块DeleteProject
 
     public DelegateCommand<string> _EnquireDialog;
+
     public DelegateCommand<string> EnquireDialog =>
-         _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog);//用来打开添加数据库各种模块DeleteProject
+        _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog); //用来打开添加数据库各种模块DeleteProject
 
     public DelegateCommand<string> _OpenCommand;
+
     public DelegateCommand<string> OpenCommand =>
-         _OpenCommand ??= new DelegateCommand<string>(UiChange);//用来打开添加数据库各种模块DeleteProject
+        _OpenCommand ??= new DelegateCommand<string>(UiChange); //用来打开添加数据库各种模块DeleteProject
 
     public MainViewModel()
     {
@@ -65,6 +68,7 @@ public partial class MainViewModel : SubscriptionBase
             HeartBeat = !HeartBeat;
             // TcpStatus
         });
+        UiChange("TestLogView");
         timer.Start();
         WeakReferenceMessenger.Default.Register<TcpStatusMessage>(this,
             (r, m) => { TcpStatus = m.Value ? Brushes.Chartreuse : Brushes.Red; });
@@ -84,7 +88,7 @@ public partial class MainViewModel : SubscriptionBase
             });
             // 保存文件
             SaveFile(message, testItems);
-            
+
             // 刷新界面
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -113,6 +117,7 @@ public partial class MainViewModel : SubscriptionBase
         }));
     }
 
+
     private static void SaveFile(DataUploadMessage message, IEnumerable<TestItem> testItems)
     {
         // 保存文件
@@ -127,10 +132,11 @@ public partial class MainViewModel : SubscriptionBase
         var dictionary = new Dictionary<string, string>();
         dictionary.Add("时间", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         dictionary.Add("站位", message.Station);
+        dictionary.Add("识别码",message.Code);
         dictionary.Add("结果", message.Result);
         foreach (var item in testItems)
         {
-            dictionary.TryAdd(item.Name, item.Value);
+            dictionary.TryAdd(item.Name, item.Value.Trim());
         }
 
         // 把dictionary内的数据追加到文件，如果文件不存在则追加表头
@@ -149,29 +155,31 @@ public partial class MainViewModel : SubscriptionBase
 
     private void Config_Dialog(string obj)
     {
-        ConfigView popup = new ConfigView();
-     //   popup.ShowDialog();
         //DialogParameters keys = new DialogParameters();
         //keys.Add("Title", SelectedItems);
         //dialogService.ShowDialog(obj);
     }
+
     private void Enquire_Dialog(string obj)
     {
-        EnquireView popup = new EnquireView();
-        popup.ShowDialog();        
+        //   EnquireView popup = new EnquireView();
+        //   popup.ShowDialog();        
     }
-    
+
     private void UiChange(string obj)
     {
-        switch (obj)
+        Body = obj switch
         {
-             case "TestLogView":
-                Body = new TestLogView();  
-                break;//ConfigView
-            case "ConfigView": 
-                Body = new ConfigView(); 
-                break;
-        }
+            "TestLogView" => new TestLogView()
+            {
+                DataContext = this
+            },
+            "UserView" => new UserView(),
+            "ConfigView" => new ConfigView(),
+            "EnquireView" => new EnquireView(),
+            "ScannerView" => new ScannerView(),
+            _ => Body
+        };
     }
 
     #region fields
@@ -186,7 +194,7 @@ public partial class MainViewModel : SubscriptionBase
     private string _productCode = "产品代码";
     private string _fixtureBinding = "01";
     private string _productName = "产品1";
-    private string _runningStatus = "设备正在进行那个项目，哪那里有异常信息以及MES状态反调等在本栏显示，便问题的处理";
+    private string _runningStatus = "运行";
     private string _operationPrompt = "操作提示";
     private int _totalCount = 0;
     private int _maintenance;
@@ -198,10 +206,14 @@ public partial class MainViewModel : SubscriptionBase
     private Brush _tcpStatus = Brushes.Gray;
     private bool _robotStatus;
     private bool _alarmStatus;
-    private string _productStatus;
+    private string _productStatus="OK";
     private int _productTime;
     private Object body;
     private bool _hartBeat;
+    private string _pcScan;
+    private bool _pcScanDone;
+    private int _cycleTime;
+    private int _lastCycleTime;
 
     #endregion
 
@@ -248,6 +260,29 @@ public partial class MainViewModel : SubscriptionBase
 
 
     /// <summary>
+    /// PC扫码
+    /// </summary>
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.PC扫码")]
+    public string PCScan
+    {
+        get => _pcScan;
+        set => SetProperty(ref _pcScan, value);
+    }
+
+    /// <summary>
+    /// PC扫码完成
+    /// </summary>
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.PC扫码完成")]
+    public bool PCScanDone
+    {
+        get => _pcScanDone;
+        set => SetProperty(ref _pcScanDone, value);
+    }
+
+
+    /// <summary>
     /// 机器人状态
     /// </summary>
 
@@ -278,6 +313,12 @@ public partial class MainViewModel : SubscriptionBase
     {
         get => _productStatus;
         set => SetProperty(ref _productStatus, value);
+    }
+
+    [RelayCommand]
+    public void ScanDone()
+    {
+        this.PCScanDone = !this.PCScanDone;
     }
 
 
@@ -477,6 +518,24 @@ public partial class MainViewModel : SubscriptionBase
             NotifyPropertyChanged(nameof(YieldRate));
         }
     }
+    
+    [MonitoredItem(nodeId:"ns=4;s=MES_交互.周期时间")]
+    public int CycleTime
+    {
+        get => _cycleTime;
+        set
+        {
+            SetProperty(ref this._cycleTime, value);
+        }
+    }
+    
+    [MonitoredItem(nodeId:"ns=4;s=MES_交互.上一次周期")]
+    public int LastCycleTime
+    {
+        get => _lastCycleTime;
+        set => SetProperty(ref this._lastCycleTime, value);
+    }
+    
 
     /// <summary>
     /// 合格数
@@ -495,16 +554,13 @@ public partial class MainViewModel : SubscriptionBase
     public Object Body
     {
         get => body;
-        set
-        {
-            SetProperty(ref this.body, value);
-        }
+        set { SetProperty(ref this.body, value); }
     }
 
     /// <summary>
     /// 合格率
     /// </summary>
-    public string YieldRate => _totalCount > 0 ? (_okQty * 1.0 / _totalCount).ToString("P2") : 0.ToString("P2");
+    public string YieldRate => _completeQty > 0 ? (_okQty * 1.0 / _completeQty).ToString("P2") : 0.ToString("P2");
 
     /// <summary>
     /// 当前时间

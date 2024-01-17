@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="比亚迪AGS_WPF.Views.ScannerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:比亚迪agsWpf="clr-namespace:比亚迪AGS_WPF"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:wpfExtensions="clr-namespace:比亚迪AGS_WPF.WpfExtensions"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance 比亚迪agsWpf:MainViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="人工扫码" HorizontalAlignment="Center" FontSize="30"></TextBlock>
+            <TextBox Text="{Binding PCScan,UpdateSourceTrigger=PropertyChanged}" Width="300">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding ScanDoneCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+    
+            <Button Width="300"
+                    Background="{Binding PCScanDone, Mode=OneWay, Converter={StaticResource BoolToBrushConverter},
+                ConverterParameter=Chartreuse}"
+                    Command="{Binding ScanDoneCommand  }">确认</Button>
+        </StackPanel>      
+
+
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" wpfExtensions:DataGridExtensions.AutoScroll="True"   ItemsSource="{Binding TestLogs}">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Time}"
+                    Header="时间" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Type}"
+                    Header="类型" />
+                <DataGridTextColumn
+                    Width="2*"
+                    Binding="{Binding Log}"
+                    Header="消息" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Level}"
+                    Header="等级" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
