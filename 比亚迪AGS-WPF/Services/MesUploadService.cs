@@ -10,8 +10,11 @@ namespace 比亚迪AGS_WPF.Services;
 
 public class MesService
 {
-    public MesService(BydMesCom mes)
+    MainViewModel _mainViewModel;
+
+    public MesService(BydMesCom mes, MainViewModel mainViewModel)
     {
+        this._mainViewModel = mainViewModel;
         WeakReferenceMessenger.Default.Register<UserLoginMessage>(this, (r, m) =>
         {
             WeakReferenceMessenger.Default.Send(new TestLog()
@@ -62,51 +65,72 @@ public class MesService
         });
         WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, (r, m) =>
         {
-            WeakReferenceMessenger.Default.Send<TestLog>(new TestLog()
+            WeakReferenceMessenger.Default.Send(new TestLog()
             {
-                Type = "MES",
+                Type = this._mainViewModel?.Mode,
                 Log = $"数据上传：{m.Code},{m.Result},{m.Value}",
                 Level = "INFO"
             });
-            mes.条码上传(m.Result == "PASS", m.Code, "1.0", "1.0", m.Value, out bool 验证结果, out string mes反馈);
+            if (CanUpload())
+            {
+                mes.条码上传(m.Result == "PASS", m.Code, "1.0", "1.0", m.Value, out bool 验证结果, out string mes反馈);
 
-            var cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
+                var cleanText = RemoveHtmlTags(mes反馈);
+                m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
-            WeakReferenceMessenger.Default.Send(new TestLog()
-                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
+                WeakReferenceMessenger.Default.Send(new TestLog()
+                    {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
+            }
+            else
+            {
+                m.message.ReplyLine("Y" + ";" + "本地模式");
+            }
         });
         WeakReferenceMessenger.Default.Register<CodeVerifyMessage>(this, (r, m) =>
         {
             WeakReferenceMessenger.Default.Send(new TestLog()
             {
-                Type = "MES",
+                Type = this._mainViewModel?.Mode,
                 Log = $"条码验证：{m.Code}",
                 Level = "INFO"
             });
-            mes.条码验证(m.Code, out bool 验证结果, out string mes反馈);
+            if (CanUpload())
+            {
+                mes.条码验证(m.Code, out bool 验证结果, out string mes反馈);
 
-            string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
+                string cleanText = RemoveHtmlTags(mes反馈);
+                m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
-            WeakReferenceMessenger.Default.Send(new TestLog()
-                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
+                WeakReferenceMessenger.Default.Send(new TestLog()
+                    {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
+            }       else
+            {
+                m.message.ReplyLine("Y" + ";" + "本地模式");
+            }
         });
         WeakReferenceMessenger.Default.Register<AssemblyMessage>(this, (r, m) =>
         {
             WeakReferenceMessenger.Default.Send(new TestLog()
             {
-                Type = "MES",
+                Type = this._mainViewModel?.Mode,
                 Log = $"离散装配：{m.Code},{string.Join(",", m.PartCodes)}",
                 Level = "INFO"
             });
-            mes.离散装配(m.Code, m.PartCodes, out bool 验证结果, out string mes反馈);
+            if (CanUpload())
+            {
+                mes.离散装配(m.Code, m.PartCodes, out bool 验证结果, out string mes反馈);
 
-            string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
+                string cleanText = RemoveHtmlTags(mes反馈);
+                m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
 
-            WeakReferenceMessenger.Default.Send(new TestLog()
-                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
+                WeakReferenceMessenger.Default.Send(new TestLog()
+                    {Type = this._mainViewModel?.Mode, Log = $"MES反馈：{cleanText}", Level = "INFO"});           
+            }
+            else
+            {
+                m.message.ReplyLine("Y" + ";" + "本地模式");
+            }
+
         });
         WeakReferenceMessenger.Default.Register<OrderBindingMessage>(this, (r, m) =>
         {
@@ -116,14 +140,28 @@ public class MesService
                 Log = $"工单绑定：" + m.Order,
                 Level = "INFO"
             });
-            mes.工单绑定(m.Order, out bool 验证结果, out string mes反馈);
+            if (CanUpload())
+            {
+                mes.工单绑定(m.Order, out bool 验证结果, out string mes反馈);
 
-            string cleanText = RemoveHtmlTags(mes反馈);
-            m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
-            //m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + mes反馈);
-            WeakReferenceMessenger.Default.Send(new TestLog()
-                {Type = "MES", Log = $"MES反馈：{cleanText}", Level = "INFO"});
+                string cleanText = RemoveHtmlTags(mes反馈);
+                m.message.ReplyLine(验证结果 ? "Y" + ";" + cleanText : "N" + ";" + cleanText);
+                //m.message.ReplyLine(验证结果 ? "Y" : "N" + ";" + mes反馈);
+                WeakReferenceMessenger.Default.Send(new TestLog {          Type = this._mainViewModel?.Mode, Log = $"MES反馈：{cleanText}", Level = "INFO"}); 
+            }       else
+            {
+                m.message.ReplyLine("Y" + ";" + "本地模式");
+            }
         });
+    }
+    
+    private bool CanUpload()
+    {
+        if (_mainViewModel.Mode.Contains("MES"))
+        {
+            return true;
+        }
+        return false;
     }
 
     static string RemoveHtmlTags(string text)
