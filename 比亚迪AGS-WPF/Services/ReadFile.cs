@@ -43,6 +43,7 @@ namespace 比亚迪AGS_WPF.Services
                         {
                             dataTable.Columns.Add("");
                         }
+
                         dataTable.Rows.Add(fields);
                     }
                 }
@@ -54,33 +55,41 @@ namespace 比亚迪AGS_WPF.Services
         }
 
 
-        public static ObservableCollection<FileSystemItem> GetCsvFiles(string folderPath)
+        public static void GetCsvFiles(string folderPath, ObservableCollection<FileSystemItem> folderList)
         {
-            ObservableCollection<FileSystemItem> folderList = new ObservableCollection<FileSystemItem>();
-            List<string> filess = new List<string>();
-
-            DirectoryInfo root = new DirectoryInfo(folderPath);
-            string[] files = Directory.GetFiles(folderPath, "*.csv");
-            foreach (FileInfo f in root.GetFiles())
+            // Process the list of files found in the directory.
+            string[] fileEntries = Directory.GetFiles(folderPath);
+            foreach (string fileName in fileEntries)
             {
-                filess.Add(f.Name);
-                filess.Add(f.FullName);
-                //string fullName = f.FullName;
-            }
-
-            DirectoryInfo folder = new DirectoryInfo(folderPath);
-
-            foreach (FileInfo file in folder.GetFiles("*.csv"))
-            {
-                folderList.Add(new FileSystemItem()
+                FileInfo fileInfo = new FileInfo(fileName);
+                if (fileInfo.Extension == ".csv")
                 {
-                    Name = file.Name,
-                    Path = file.FullName,
-                    Type = "csv",
-                });
+                    folderList.Add(new FileSystemItem()
+                    {
+                        Name = fileInfo.Name,
+                        Path = fileInfo.FullName,
+                        Type = "csv",
+                    });
+                }
             }
 
-            return folderList;
+            // Recurse into subdirectories of this directory.
+            string[] subdirectoryEntries = Directory.GetDirectories(folderPath);
+            foreach (string subdirectory in subdirectoryEntries)
+            {
+                
+               var item =(new FileSystemItem()
+                {
+                    Name = new DirectoryInfo(subdirectory).Name,
+                    Path = subdirectory,
+                    Type = "folder",
+                    IsFolder = true,
+                    SubItems = new ObservableCollection<FileSystemItem>()
+                });
+                folderList.Add(item);
+                GetCsvFiles(subdirectory, item.SubItems);
+            }
+            
         }
     }
 }

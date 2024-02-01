@@ -1,14 +1,12 @@
-﻿<UserControl x:Class="比亚迪AGS_WPF.Views.ScannerView"
+﻿<UserControl x:Class="比亚迪AGS_WPF.Views.UserOperationView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:比亚迪agsWpf="clr-namespace:比亚迪AGS_WPF"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:local="clr-namespace:比亚迪AGS_WPF.Views"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance 比亚迪agsWpf:MainViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Button>测试py</Button>
+        
     </Grid>
 </UserControl>

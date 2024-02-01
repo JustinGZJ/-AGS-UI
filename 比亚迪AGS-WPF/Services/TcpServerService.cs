@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SimpleTCP;
+using 比亚迪AGS_WPF.Config;
 
 namespace 比亚迪AGS_WPF.Services;
 
@@ -69,7 +70,7 @@ public class TcpServerService
     private readonly ILogger<TcpServerService> _logger;
     private SimpleTcpServer _server;
 
-    public TcpServerService(ILogger<TcpServerService> logger, IConfiguration configuration)
+    public TcpServerService(ILogger<TcpServerService> logger,RootConfig config)
     {
         _logger = logger;
         _server = new SimpleTcpServer
@@ -80,7 +81,7 @@ public class TcpServerService
         _server.DataReceived += Server_DataReceived!;
         _server.ClientConnected += Server_ClientConnected!;
         _server.ClientDisconnected += Server_ClientDisconnected!;
-        var port = configuration.GetValue<int>("ServerPort");
+        var port = config.ServerPort;
         _server.Start(port);
     }
 

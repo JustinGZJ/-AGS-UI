@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -10,12 +7,12 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Configuration;
 using Prism.Commands;
 using Workstation.ServiceModel.Ua;
+using 比亚迪AGS_WPF.Config;
 using 比亚迪AGS_WPF.Services;
-using 比亚迪AGS_WPF.ViewModels;
 using 比亚迪AGS_WPF.Views;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace 比亚迪AGS_WPF;
 
@@ -35,50 +32,52 @@ public class TestLog
     public string Level { get; set; }
 }
 
-[Subscription(endpointUrl: "MainPLC", publishingInterval: 500, keepAliveCount: 20)]
-public partial class MainViewModel : SubscriptionBase
+// [Subscription(endpointUrl: "MainPLC", publishingInterval: 500, keepAliveCount: 20)]
+public partial class MainViewModel : ObservableRecipient
 {
-    public DelegateCommand<string> _ConfigDialog;
-
-    public DelegateCommand<string> ConfigDialog =>
-        _ConfigDialog ??= new DelegateCommand<string>(Config_Dialog); //用来打开添加数据库各种模块DeleteProject
-
-    public DelegateCommand<string> _EnquireDialog;
-
-    public DelegateCommand<string> EnquireDialog =>
-        _EnquireDialog ??= new DelegateCommand<string>(Enquire_Dialog); //用来打开添加数据库各种模块DeleteProject
-
-    public DelegateCommand<string> _OpenCommand;
+    
+    
+    private DelegateCommand<string>? _openCommand;
 
     public DelegateCommand<string> OpenCommand =>
-        _OpenCommand ??= new DelegateCommand<string>(UiChange); //用来打开添加数据库各种模块DeleteProject
+        _openCommand ??= new DelegateCommand<string>(UiChange); //用来打开添加数据库各种模块DeleteProject
 
-    public MainViewModel()
+    public MainViewModel(RootConfig config)
     {
-        Title = App.Current.Config.GetValue<string>("title");
-        Version = App.Current.Config.GetValue<string>("Version");
-        PhoneNumber = App.Current.Config.GetValue<string>("PhoneNumber");
-        DispatcherTimer timer = new DispatcherTimer()
+        _config = config;
+        SetupTimer();
+        InitializeProperties();
+        RegisterMessageHandlers();
+        UiChange("TestLogView");
+    }
+
+
+    private void InitializeProperties()
+    {
+        Title = _config.Title;
+        Version = _config.Version;
+        PhoneNumber = _config.PhoneNumber;
+        Company = _config.Company;
+    }
+
+    private void SetupTimer()
+    {
+        DispatcherTimer timer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(500),
         };
-        timer.Tick += ((sender, args) =>
-        {
-            NotifyPropertyChanged(nameof(CurrentTIme));
-            HeartBeat = !HeartBeat;
-            // TcpStatus
-        });
-        UiChange("TestLogView");
+        timer.Tick += ((sender, args) => { OnPropertyChanged(nameof(CurrentTIme)); });
         timer.Start();
-        WeakReferenceMessenger.Default.Register<TcpStatusMessage>(this,
-            (r, m) => { TcpStatus = m.Value ? Brushes.Chartreuse : Brushes.Red; });
+    }
 
+    private void RegisterMessageHandlers()
+    {
         WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, ((recipient, message) =>
         {
             var testItems = message.Value.Split('!').Where(x => x.Contains(",")).Select(x =>
             {
                 var m = x.Split(',');
-                return new TestItem()
+                return new TestItem
                 {
                     Name = m[0],
                     Parameter = m[1],
@@ -87,7 +86,7 @@ public partial class MainViewModel : SubscriptionBase
                 };
             });
             // 保存文件
-            SaveFile(message, testItems);
+            TestLogHelper.SaveFile(message, testItems);
 
             // 刷新界面
             Application.Current.Dispatcher.Invoke(() =>
@@ -99,9 +98,10 @@ public partial class MainViewModel : SubscriptionBase
                 }
             });
         }));
+
         WeakReferenceMessenger.Default.Register<TestLog>(this, ((recipient, message) =>
         {
-            var log = new TestLog()
+            var log = new TestLog
             {
                 Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 Type = message.Type,
@@ -116,69 +116,52 @@ public partial class MainViewModel : SubscriptionBase
             });
         }));
     }
-
-
-    private static void SaveFile(DataUploadMessage message, IEnumerable<TestItem> testItems)
-    {
-        // 保存文件
-        var fileName = AppDomain.CurrentDomain.BaseDirectory + "Data\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".csv";
-        // 检查目录是否存在,+ DateTime.Now.ToString("yyyy-MM") +"\\"
-        if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Data\\"))
-        {
-            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Data\\");
-        }
-
-        // 把数据放如dictionary
-        var dictionary = new Dictionary<string, string>();
-        dictionary.Add("时间", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-        dictionary.Add("站位", message.Station);
-        dictionary.Add("识别码",message.Code);
-        dictionary.Add("结果", message.Result);
-        foreach (var item in testItems)
-        {
-            dictionary.TryAdd(item.Name, item.Value.Trim());
-        }
-
-        // 把dictionary内的数据追加到文件，如果文件不存在则追加表头
-        //检查文件是否存在
-        var fileExists = File.Exists(fileName);
-        var header = string.Join(",", dictionary.Keys);
-        //添加表头到文件
-        if (!fileExists)
-        {
-            File.WriteAllText(fileName, header + Environment.NewLine);
-        }
-
-        //将数据追加到文件
-        File.AppendAllText(fileName, string.Join(",", dictionary.Values) + Environment.NewLine);
-    }
-
-    private void Config_Dialog(string obj)
-    {
-        //DialogParameters keys = new DialogParameters();
-        //keys.Add("Title", SelectedItems);
-        //dialogService.ShowDialog(obj);
-    }
-
-    private void Enquire_Dialog(string obj)
-    {
-        //   EnquireView popup = new EnquireView();
-        //   popup.ShowDialog();        
-    }
-
     private void UiChange(string obj)
     {
-        Body = obj switch
+        switch (obj)
         {
-            "TestLogView" => new TestLogView()
+            case "开始运行":
+                ContentView = new TestLogView
+                {
+                    DataContext = this
+                };
+                break;
+            case "停止":
+                ContentView = new TestLogView
+                {
+                    DataContext = this
+                };
+                break;
+            case "监视页面":
+                ContentView = new TestLogView
+                {
+                    DataContext = this
+                };
+                break;
+            case "配置信息":
+                ContentView = new ConfigView();
+                break;
+            case "数据查询":
+                ContentView = new DataView();
+                break;
+            case "用户变更":
+                ContentView = new UserView();
+                break;
+            case "用户操作":
+                break;
+        }
+        
+        ContentView = obj switch
+        {
+            "TestLogView" => new TestLogView
             {
                 DataContext = this
             },
             "UserView" => new UserView(),
             "ConfigView" => new ConfigView(),
-            "EnquireView" => new EnquireView(),
+            "EnquireView" => new DataView(),
             "ScannerView" => new ScannerView(),
-            _ => Body
+            _ => ContentView
         };
     }
 
@@ -196,21 +179,20 @@ public partial class MainViewModel : SubscriptionBase
     private string _productName = "产品1";
     private string _runningStatus = "运行";
     private string _operationPrompt = "操作提示";
-    private int _totalCount = 0;
+    private int _totalCount;
     private int _maintenance;
     private int _workOderQty;
 
     private int _completeQty;
     private int _okQty;
     private string? _phoneNumber;
-    private Brush _tcpStatus = Brushes.Gray;
     private bool _robotStatus;
     private bool _alarmStatus;
-    private string _productStatus="OK";
+    private string _productStatus = "OK";
     private int _productTime;
-    private Object body;
+    private object? _contentView;
     private bool _hartBeat;
-    private string _pcScan;
+    private string? _pcScan;
     private bool _pcScanDone;
     private int _cycleTime;
     private int _lastCycleTime;
@@ -219,90 +201,26 @@ public partial class MainViewModel : SubscriptionBase
 
     #region properties
 
-    /// <summary>
-    /// Gets the value of ServerServerStatus.
-    /// </summary>
-    [MonitoredItem(nodeId: "i=2256")]
-    public ServerStatusDataType? ServerServerStatus
+
+    private ObservableCollection<StatusItem> _statusItems = new()
     {
-        get => _serverServerStatus;
-        private set
-        {
-            SetProperty(ref this._serverServerStatus, value);
-            NotifyPropertyChanged(nameof(ServerStatus));
-        }
-    }
+        new StatusItem { Name = "PLC", Status = Brushes.Gray },
+        new StatusItem { Name = "MES", Status = Brushes.Red },
+        new StatusItem { Name = "OPC", Status = Brushes.Gray },
+        new StatusItem { Name = "TCP", Status = Brushes.Gray }
+    };
 
-
-    /// <summary>
-    /// OPC Status
-    /// </summary>
-    public Brush ServerStatus
+    public ObservableCollection<StatusItem> StatusItems
     {
-        get
-        {
-            if (ServerServerStatus == null)
-            {
-                return Brushes.Gray;
-            }
-
-            return ServerServerStatus.State switch
-            {
-                ServerState.Failed => Brushes.Red,
-                ServerState.Shutdown => Brushes.Red,
-                ServerState.Suspended => Brushes.Red,
-                ServerState.Running => Brushes.Chartreuse,
-                ServerState.CommunicationFault => Brushes.Fuchsia,
-                _ => Brushes.Gray
-            };
-        }
+        get => _statusItems;
+        set => SetProperty(ref _statusItems, value);
     }
+    
+    
 
 
-    /// <summary>
-    /// PC扫码
-    /// </summary>
 
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.PC扫码")]
-    public string PCScan
-    {
-        get => _pcScan;
-        set => SetProperty(ref _pcScan, value);
-    }
-
-    /// <summary>
-    /// PC扫码完成
-    /// </summary>
-
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.PC扫码完成")]
-    public bool PCScanDone
-    {
-        get => _pcScanDone;
-        set => SetProperty(ref _pcScanDone, value);
-    }
-
-
-    /// <summary>
-    /// 机器人状态
-    /// </summary>
-
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.机器人")]
-    public bool RobotStatus
-    {
-        get => _robotStatus;
-        set => SetProperty(ref _robotStatus, value);
-    }
-
-
-    /// <summary>
-    /// 报警状态
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.报警")]
-    public bool AlarmStatus
-    {
-        get => _alarmStatus;
-        set => SetProperty(ref _alarmStatus, value);
-    }
+    
 
 
     /// <summary>
@@ -314,22 +232,8 @@ public partial class MainViewModel : SubscriptionBase
         get => _productStatus;
         set => SetProperty(ref _productStatus, value);
     }
-
-    [RelayCommand]
-    public void ScanDone()
-    {
-        this.PCScanDone = !this.PCScanDone;
-    }
-
-
-    /// <summary>
-    /// TCP状态
-    /// </summary>
-    public Brush TcpStatus
-    {
-        get { return _tcpStatus; }
-        set { SetProperty(ref _tcpStatus, value); }
-    }
+    
+    
 
 
     /// <summary>
@@ -338,7 +242,7 @@ public partial class MainViewModel : SubscriptionBase
     public string? Title
     {
         get => _title;
-        private set => SetProperty(ref this._title, value);
+        private set => SetProperty(ref _title, value);
     }
 
     /// <summary>
@@ -348,13 +252,12 @@ public partial class MainViewModel : SubscriptionBase
     public string? Version
     {
         get => _version;
-        private set => SetProperty(ref this._version, value);
+        private set => SetProperty(ref _version, value);
     }
 
     /// <summary>
     /// 生产时间
     /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.生产时间")]
     public int ProductTime
     {
         get => _productTime;
@@ -368,7 +271,7 @@ public partial class MainViewModel : SubscriptionBase
     public string ProductBarcode
     {
         get => _productBarcode;
-        set => SetProperty(ref this._productBarcode, value);
+        set => SetProperty(ref _productBarcode, value);
     }
 
     /// <summary>
@@ -378,7 +281,7 @@ public partial class MainViewModel : SubscriptionBase
     public string UserName
     {
         get => _userName;
-        set => SetProperty(ref this._userName, value);
+        set => SetProperty(ref _userName, value);
     }
 
     /// <summary>
@@ -388,7 +291,7 @@ public partial class MainViewModel : SubscriptionBase
     public string Mode
     {
         get => _mode;
-        set => SetProperty(ref this._mode, value);
+        set => SetProperty(ref _mode, value);
     }
 
     /// <summary>
@@ -398,7 +301,7 @@ public partial class MainViewModel : SubscriptionBase
     public string ProductId
     {
         get => _productId;
-        set => SetProperty(ref this._productId, value);
+        set => SetProperty(ref _productId, value);
     }
 
     /// <summary>
@@ -408,7 +311,7 @@ public partial class MainViewModel : SubscriptionBase
     public string ProductName
     {
         get => _productName;
-        set => SetProperty(ref this._productName, value);
+        set => SetProperty(ref _productName, value);
     }
 
 
@@ -419,7 +322,7 @@ public partial class MainViewModel : SubscriptionBase
     public string ProductCode
     {
         get => _productCode;
-        set => SetProperty(ref this._productCode, value);
+        set => SetProperty(ref _productCode, value);
     }
 
     /// <summary>
@@ -429,7 +332,20 @@ public partial class MainViewModel : SubscriptionBase
     public string FixtureBinding
     {
         get => _fixtureBinding;
-        set => SetProperty(ref this._fixtureBinding, value);
+        set => SetProperty(ref _fixtureBinding, value);
+    }
+
+    /// <summary>
+    /// 公司
+    /// </summary>
+    private string? _company;
+
+    private readonly RootConfig _config;
+
+    public string? Company
+    {
+        get => _company;
+        set => SetProperty(ref _company, value);
     }
 
     /// <summary>
@@ -439,7 +355,7 @@ public partial class MainViewModel : SubscriptionBase
     public string? PhoneNumber
     {
         get => _phoneNumber;
-        set => SetProperty(ref this._phoneNumber, value);
+        set => SetProperty(ref _phoneNumber, value);
     }
 
     /// <summary>
@@ -450,7 +366,7 @@ public partial class MainViewModel : SubscriptionBase
     public string RunningStatus
     {
         get => _runningStatus;
-        set => SetProperty(ref this._runningStatus, value);
+        set => SetProperty(ref _runningStatus, value);
     }
 
     /// <summary>
@@ -460,7 +376,7 @@ public partial class MainViewModel : SubscriptionBase
     public string OperationPrompt
     {
         get => _operationPrompt;
-        set => SetProperty(ref this._operationPrompt, value);
+        set => SetProperty(ref _operationPrompt, value);
     }
 
     /// <summary>
@@ -470,7 +386,7 @@ public partial class MainViewModel : SubscriptionBase
     public int TotalCount
     {
         get => _totalCount;
-        set => SetProperty(ref this._totalCount, value);
+        set => SetProperty(ref _totalCount, value);
     }
 
     /// <summary>
@@ -480,7 +396,7 @@ public partial class MainViewModel : SubscriptionBase
     public int Maintenance
     {
         get => _maintenance;
-        set => SetProperty(ref this._maintenance, value);
+        set => SetProperty(ref _maintenance, value);
     }
 
     /// <summary>
@@ -490,7 +406,7 @@ public partial class MainViewModel : SubscriptionBase
     public int WorkOderQty
     {
         get => _workOderQty;
-        set => SetProperty(ref this._workOderQty, value);
+        set => SetProperty(ref _workOderQty, value);
     }
 
 
@@ -501,7 +417,7 @@ public partial class MainViewModel : SubscriptionBase
     public bool HeartBeat
     {
         get => _hartBeat;
-        set => SetProperty(ref this._hartBeat, value);
+        set => SetProperty(ref _hartBeat, value);
     }
 
     /// <summary>
@@ -514,28 +430,25 @@ public partial class MainViewModel : SubscriptionBase
         get => _completeQty;
         set
         {
-            SetProperty(ref this._completeQty, value);
-            NotifyPropertyChanged(nameof(YieldRate));
+            SetProperty(ref _completeQty, value);
+            OnPropertyChanged(nameof(YieldRate));
         }
     }
-    
-    [MonitoredItem(nodeId:"ns=4;s=MES_交互.周期时间")]
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.周期时间")]
     public int CycleTime
     {
         get => _cycleTime;
-        set
-        {
-            SetProperty(ref this._cycleTime, value);
-        }
+        set { SetProperty(ref _cycleTime, value); }
     }
-    
-    [MonitoredItem(nodeId:"ns=4;s=MES_交互.上一次周期")]
+
+    [MonitoredItem(nodeId: "ns=4;s=MES_交互.上一次周期")]
     public int LastCycleTime
     {
         get => _lastCycleTime;
-        set => SetProperty(ref this._lastCycleTime, value);
+        set => SetProperty(ref _lastCycleTime, value);
     }
-    
+
 
     /// <summary>
     /// 合格数
@@ -546,15 +459,15 @@ public partial class MainViewModel : SubscriptionBase
         get => _okQty;
         set
         {
-            SetProperty(ref this._okQty, value);
-            NotifyPropertyChanged(nameof(YieldRate));
+            SetProperty(ref _okQty, value);
+            OnPropertyChanged(nameof(YieldRate));
         }
     }
 
-    public Object Body
+    public object? ContentView
     {
-        get => body;
-        set { SetProperty(ref this.body, value); }
+        get => _contentView;
+        private set => SetProperty(ref _contentView, value);
     }
 
     /// <summary>
@@ -571,9 +484,7 @@ public partial class MainViewModel : SubscriptionBase
     /// <summary>
     /// 测试项目
     /// </summary>
-    public ObservableCollection<TestItem> TestItems { get; } = new()
-    {
-    };
+    public ObservableCollection<TestItem> TestItems { get; } = new();
 
     public ObservableCollection<TestLog> TestLogs { get; set; } = new();
 
@@ -585,9 +496,17 @@ public partial class MainViewModel : SubscriptionBase
     [RelayCommand]
     private void Exit()
     {
-        //this.Exit();
-        Application.Current.Shutdown();
+        //添加提醒
+        var result = MessageBox.Show("是否退出程序？", "提示", MessageBoxButton.YesNo);
+        if (result == MessageBoxResult.Yes)
+            Application.Current.Shutdown();
     }
 
     #endregion
+}
+
+public partial class StatusItem : ObservableObject
+{
+    [ObservableProperty] private string? _name;
+    [ObservableProperty] private Brush? _status;
 }

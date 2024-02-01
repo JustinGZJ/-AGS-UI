@@ -24,22 +24,19 @@ namespace 比亚迪AGS_WPF.Views
     /// <summary>
     /// EnquireView.xaml 的交互逻辑
     /// </summary>
-    public partial class EnquireView 
+    public partial class DataView 
     {
-        public EnquireView()
+        ObservableCollection<FileSystemItem> folderList = new();
+        public DataView()
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService<EnquireViewModel>();
-            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
-            ObservableCollection<FileSystemItem> folderList = ReadFile.GetCsvFiles(folderPath);
-
+             ReadFile.GetCsvFiles(AppPath.DataPath, folderList);
             myTreeView.ItemsSource = folderList;
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            FileSystemItem selectedItem = e.NewValue as FileSystemItem;
-            if (selectedItem != null)
+            if (e.NewValue is FileSystemItem selectedItem)
             {
                 if (selectedItem.IsFolder)
                 {

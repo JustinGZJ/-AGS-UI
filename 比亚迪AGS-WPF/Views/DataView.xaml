@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="比亚迪AGS_WPF.Views.EnquireView"
+    x:Class="比亚迪AGS_WPF.Views.DataView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,20 +16,12 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
-                <RowDefinition  />
-            </Grid.RowDefinitions>
-            <CheckBox>
-                
-            </CheckBox>
             <TreeView
             x:Name="myTreeView"
-            Grid.Row="1"
             ItemsSource="{Binding}"
             SelectedItemChanged="TreeView_SelectedItemChanged">
                 <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding SubItems}">
                         <TextBlock Text="{Binding Name}" />
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>

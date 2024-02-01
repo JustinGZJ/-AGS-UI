@@ -17,10 +17,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration.Json;
 using Serilog;
 using SimpleTCP;
-using 比亚迪AGS_WPF.BydMes;
 using 比亚迪AGS_WPF.Services;
 using 比亚迪AGS_WPF.ViewModels;
 using Newtonsoft.Json;
+using 比亚迪AGS_WPF.Config;
 using 比亚迪AGS_WPF.Views;
 
 namespace 比亚迪AGS_WPF
@@ -35,7 +35,7 @@ namespace 比亚迪AGS_WPF
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Services = ConfigureServices();
 
-
+         //   PropertyGridEditorHelper.RegisterEditor(typeof(List<>), typeof(MyCustomListEditor));
             this.InitializeComponent();
         }
 
@@ -43,8 +43,7 @@ namespace 比亚迪AGS_WPF
         /// Gets the current <see cref="App"/> instance in use
         /// </summary>
         public new static App Current => (App) Application.Current;
-
-        public UaApplication OpcApplication { get; private set; }
+        
         public IConfigurationRoot Config { get; private set; }
 
         /// <summary>
@@ -59,18 +58,10 @@ namespace 比亚迪AGS_WPF
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day,retainedFileCountLimit:20)
                 .CreateLogger();
-
-            // Build and run an OPC UA application instance.
-            OpcApplication = new UaApplicationBuilder()
-                .SetApplicationUri($"urn:{Dns.GetHostName()}:Workstation.StatusHmi")
-                .AddMappedEndpoints(Config)
-                .Build();
-            OpcApplication.Run();
-
+            
             Services.GetService<TcpServerService>();
-            Services.GetService<MesService>();
 
 
             // Create and show the main view.
@@ -98,12 +89,8 @@ namespace 比亚迪AGS_WPF
                 logging.ClearProviders();
                 logging.AddSerilog();
             });
-            services.AddSingleton<IConfiguration>(Config);
-            services.AddOptions<BydMesConfig>().Bind(Config.GetSection("BydMesConfig"));
             
             services.AddSingleton<TcpServerService>();
-            services.AddTransient<BydMesCom>();
-            services.AddSingleton<MesService>();
             // viewmodels
             services.AddSingleton<MainViewModel>();
             services.AddTransient<ConfigViewModel>(); 
@@ -111,7 +98,7 @@ namespace 比亚迪AGS_WPF
             services.AddSingleton<TestLogViewModel>();
             services.AddTransient<UserViewModel>();
             services.AddTransient<ScannerView>();
-            //     services.AddSingleton<TcpServer>();
+            services.AddSingleton(ConfigHelper.LoadConfig<RootConfig>( AppPath.AppSettingsPath));
 
             return services.BuildServiceProvider();
         }

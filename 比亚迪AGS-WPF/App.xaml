@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="Styles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+               
                 <ResourceDictionary>
                     <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" />
                     <converters:RunningStatusColorConverter x:Key="RunningStatusColorConverter"></converters:RunningStatusColorConverter>

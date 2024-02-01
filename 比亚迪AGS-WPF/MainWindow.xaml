@@ -36,71 +36,16 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="173*" />
                     </Grid.ColumnDefinitions>
-                    <UniformGrid Grid.Column="0" Columns="4">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="23*" />
-                                <RowDefinition Height="12*" />
-                            </Grid.RowDefinitions>
-                            <Ellipse Fill="{Binding ServerStatus, Mode=OneWay}" Style="{StaticResource LedStatus}" />
-                            <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
-                                <TextBlock
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    PLC
-                                </TextBlock>
-                            </Border>
-                        </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="23*" />
-                                <RowDefinition Height="12*" />
-                            </Grid.RowDefinitions>
-                            <Ellipse Fill="{Binding RobotStatus, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}, ConverterParameter=Chartreuse}" Style="{StaticResource LedStatus}" />
-                            <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
-                                <TextBlock
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    机器人
-                                </TextBlock>
-                            </Border>
 
-                        </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="23*" />
-                                <RowDefinition Height="12*" />
-                            </Grid.RowDefinitions>
-                            <Ellipse Fill="{Binding AlarmStatus, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}, ConverterParameter=Chartreuse}" Style="{StaticResource LedStatus}" />
+                    <ItemsControl ItemsSource="{Binding StatusItems}"
+                                  ItemTemplate="{StaticResource StatusTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="4"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
 
-                            <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
-                                <TextBlock
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    报警
-                                </TextBlock>
-                            </Border>
-                        </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="23*" />
-                                <RowDefinition Height="12*" />
-                            </Grid.RowDefinitions>
-                            <Ellipse Fill="{Binding TcpStatus}" Style="{StaticResource LedStatus}" />
-
-                            <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
-                                <TextBlock
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    TCP
-                                </TextBlock>
-                            </Border>
-                        </Grid>
-                    </UniformGrid>
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="53*" />
@@ -128,46 +73,54 @@
                     <Border Grid.Column="1" Style="{StaticResource GridBorder}" />
                 </Grid>
                 <Grid x:Name="lbsheet2" Grid.Row="1">
-                    <ContentControl x:Name="Text" Content="{Binding Body}">
-                        <!--  使用内容呈现器来显示用户控件界面 Content="{Binding Body}" prism:RegionManager.RegionName="ContentRegion"  -->
+                    <ContentControl x:Name="Text" Content="{Binding ContentView}">
+                    
                     </ContentControl>
                 </Grid>
                 <Grid x:Name="lbbuttons" Grid.Row="2">
                     <UniformGrid Columns="8">
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="TestLogView"
-                            Style="{StaticResource LbbStyle}">开始运行</Button>
-                        <Button 
-                            Command="{Binding OpenCommand}"
-                            CommandParameter="TestLogView"
-                            Style="{StaticResource LbbStyle}">停止</Button>
+                            CommandParameter="开始运行"
+                            Style="{StaticResource LbbStyle}">
+                            开始运行
+                        </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="TestLogView"
+                            CommandParameter="停止"
+                            Style="{StaticResource LbbStyle}">
+                            停止
+                        </Button>
+                        <Button
+                            Command="{Binding OpenCommand}"
+                            CommandParameter="监视页面"
                             Style="{StaticResource LbbStyle}">
                             监视页面
                         </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="ConfigView"
+                            CommandParameter="配置信息"
                             Style="{StaticResource LbbStyle}">
                             配置信息
                         </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="EnquireView"
+                            CommandParameter="数据查询"
                             Style="{StaticResource LbbStyle}">
                             数据查询
                         </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="UserView"
-                            Style="{StaticResource LbbStyle}">用户变更</Button>
+                            CommandParameter="用户变更"
+                            Style="{StaticResource LbbStyle}">
+                            用户变更
+                        </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="ScannerView"
-                            Style="{StaticResource LbbStyle}">用户操作</Button>
+                            CommandParameter="用户操作"
+                            Style="{StaticResource LbbStyle}">
+                            用户操作
+                        </Button>
                         <Button Command="{Binding ExitCommand}" Style="{StaticResource LbbExitStyle}">退出</Button>
                     </UniformGrid>
                 </Grid>
@@ -551,7 +504,7 @@
             <Border Style="{StaticResource GridBorder}">
                 <TextBlock TextAlignment="Center">
                     <Run>供方信息:</Run>
-                    <Run>浙江田中精机股份有限公司</Run>
+                    <Run Text="{Binding Company}"></Run>
                     <Run />
                     <Run>联系电话:</Run>
                     <Run Text="{Binding PhoneNumber}" />

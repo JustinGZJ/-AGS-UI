@@ -14,7 +14,6 @@ public class ConfigData<T>
     {
         _fileName = fileName;
         Data = new List<T>();
-        Data = new List<T>();
     }
     public void Add(T item)
     {

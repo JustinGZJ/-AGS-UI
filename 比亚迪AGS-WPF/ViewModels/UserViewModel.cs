@@ -28,7 +28,7 @@ public partial class UserViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(DeleteUserCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpdateUserCommand))]
     private User _selectedUser;
-    ConfigData<User> userConfig = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory ,"user.json"));
+    ConfigData<User> userConfig = new(Path.Combine(AppPath.ConfigPath ,"user.json"));
     
     public UserViewModel()
     {
