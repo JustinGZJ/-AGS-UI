@@ -148,6 +148,7 @@ public partial class MainViewModel : ObservableRecipient
                 ContentView = new UserView();
                 break;
             case "用户操作":
+                ContentView = new ScannerView();
                 break;
         }
         

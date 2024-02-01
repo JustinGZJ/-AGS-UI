@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <RootNamespace>比亚迪AGS_WPF</RootNamespace>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
@@ -11,7 +11,6 @@
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
       <PackageReference Include="HandyControl" Version="3.4.0" />
-      <PackageReference Include="HandyControls" Version="3.4.5" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
@@ -19,7 +18,6 @@
       <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
       <PackageReference Include="Prism.Core" Version="8.1.97" />
-      <PackageReference Include="PropertyTools.Wpf" Version="3.1.0" />
       <PackageReference Include="pythonnet" Version="3.0.3" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
@@ -29,15 +27,13 @@
       <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525" />
       <PackageReference Include="Workstation.UaClient" Version="3.2.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Newtonsoft.Json">
-        <HintPath>..\..\..\A3.学习文件\学习文件\工具\Newtonsoft.Json.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+    
 
     <ItemGroup>
       <None Update="AppSettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="test.py">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

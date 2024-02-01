@@ -28,11 +28,5 @@ namespace 比亚迪AGS_WPF.ViewModels
         public ObservableCollection<FileSystemItem> SubItems { get; set; }
         //public ObservableCollection<string> DataList { get; set; }
     }
-
-    public class MyData
-    {
-        public string Column1 { get; set; }
-        public string Column2 { get; set; }
-        public string Column3 { get; set; }
-    }
+    
 }

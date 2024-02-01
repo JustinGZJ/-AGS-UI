@@ -6,19 +6,19 @@ namespace 比亚迪AGS_WPF.Services;
 // 路径管理类，预设了一些常用的路径，如果不存在就主动创建
 public static class AppPath
 {
-    public static string AppDataPath { get; } = AppDomain.CurrentDomain.BaseDirectory;
-    public static string LogPath { get; } = Path.Combine(AppDataPath, "Logs");
+    public static string ExePath { get; } = AppDomain.CurrentDomain.BaseDirectory;
+    public static string LogPath { get; } = Path.Combine(ExePath, "Logs");
     
 
-    public static string ConfigPath { get; } = Path.Combine(AppDataPath, "Config");
-    public static string DataPath { get; } = Path.Combine(AppDataPath, "Data");
+    public static string ConfigPath { get; } = Path.Combine(ExePath, "Config");
+    public static string DataPath { get; } = Path.Combine(ExePath, "Data");
     
     public static string AppSettingsPath { get; } = Path.Combine(ConfigPath, "AppSettings.json");
     static AppPath()
     {
-        if (!Directory.Exists(AppDataPath))
+        if (!Directory.Exists(ExePath))
         {
-            Directory.CreateDirectory(AppDataPath);
+            Directory.CreateDirectory(ExePath);
         }
         if (!Directory.Exists(LogPath))
         {

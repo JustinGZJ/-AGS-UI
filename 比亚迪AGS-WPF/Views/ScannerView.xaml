@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:比亚迪agsWpf="clr-namespace:比亚迪AGS_WPF"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance 比亚迪agsWpf:MainViewModel}"
+             d:DataContext="{d:DesignInstance viewModels:ScannerViewModel }"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Button>测试py</Button>
+        <Button Command="{Binding  TestPyCommand}">测试py</Button>
     </Grid>
 </UserControl>

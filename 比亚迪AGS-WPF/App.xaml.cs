@@ -97,7 +97,7 @@ namespace 比亚迪AGS_WPF
             services.AddTransient<EnquireViewModel>();
             services.AddSingleton<TestLogViewModel>();
             services.AddTransient<UserViewModel>();
-            services.AddTransient<ScannerView>();
+            services.AddTransient<ScannerViewModel>();
             services.AddSingleton(ConfigHelper.LoadConfig<RootConfig>( AppPath.AppSettingsPath));
 
             return services.BuildServiceProvider();

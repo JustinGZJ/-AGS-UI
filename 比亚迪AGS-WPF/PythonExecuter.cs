@@ -31,4 +31,13 @@ public class PythonExecutor
             scope.Exec(pythonCode);
         }
     }
+
+    public dynamic RunPythonFile(string filePath,Func<dynamic,dynamic> action)
+    {
+        using (Py.GIL())
+        {
+           dynamic py= Py.Import(filePath);
+           return action(py);
+        }
+    }
 }
