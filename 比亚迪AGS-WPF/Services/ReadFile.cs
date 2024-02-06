@@ -26,20 +26,21 @@ namespace 比亚迪AGS_WPF.Services
                 bool isFirstRow = true;
                 while (!parser.EndOfData)
                 {
-                    string[] fields = parser.ReadFields();
+                    string[]? fields = parser.ReadFields();
 
                     if (isFirstRow)
                     {
-                        foreach (string field in fields)
-                        {
-                            dataTable.Columns.Add(field);
-                        }
+                        if (fields != null)
+                            foreach (string field in fields)
+                            {
+                                dataTable.Columns.Add(field);
+                            }
 
                         isFirstRow = false;
                     }
                     else
                     {
-                        while (dataTable.Columns.Count < fields.Length)
+                        while (fields != null && dataTable.Columns.Count < fields.Length)
                         {
                             dataTable.Columns.Add("");
                         }
@@ -55,29 +56,27 @@ namespace 比亚迪AGS_WPF.Services
         }
 
 
-        public static void GetCsvFiles(string folderPath, ObservableCollection<FileSystemItem> folderList)
+        public static void FilterFilesWithExtension(string folderPath, ObservableCollection<FileSystemItem> folderList,string filter = "csv")
         {
             // Process the list of files found in the directory.
             string[] fileEntries = Directory.GetFiles(folderPath);
             foreach (string fileName in fileEntries)
             {
                 FileInfo fileInfo = new FileInfo(fileName);
-                if (fileInfo.Extension == ".csv")
+                if (fileInfo.Extension == ($".{filter}"))
                 {
                     folderList.Add(new FileSystemItem()
                     {
                         Name = fileInfo.Name,
                         Path = fileInfo.FullName,
-                        Type = "csv",
+                        Type = filter,
                     });
                 }
             }
-
             // Recurse into subdirectories of this directory.
             string[] subdirectoryEntries = Directory.GetDirectories(folderPath);
             foreach (string subdirectory in subdirectoryEntries)
             {
-                
                var item =(new FileSystemItem()
                 {
                     Name = new DirectoryInfo(subdirectory).Name,
@@ -87,7 +86,7 @@ namespace 比亚迪AGS_WPF.Services
                     SubItems = new ObservableCollection<FileSystemItem>()
                 });
                 folderList.Add(item);
-                GetCsvFiles(subdirectory, item.SubItems);
+                FilterFilesWithExtension(subdirectory, item.SubItems,filter);
             }
             
         }

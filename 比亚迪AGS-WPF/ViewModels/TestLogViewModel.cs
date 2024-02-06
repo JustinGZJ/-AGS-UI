@@ -13,46 +13,46 @@ using 比亚迪AGS_WPF.Services;
 
 namespace 比亚迪AGS_WPF.ViewModels
 {
-    public class TestLogViewModel : ObservableObject
+    public class TestLogViewModel : ObservableRecipient
     {
+        /// <summary>
+        /// 日志
+        /// </summary>
         public ObservableCollection<TestLog> TestLogs { get; set; } = new();
 
         /// <summary>
         /// 测试项目
         /// </summary>
-        public ObservableCollection<TestItem> TestItems { get; } = new()
-        {
-        };
+        public ObservableCollection<TestItem> TestItems { get; } = new();
 
         public TestLogViewModel()
         {
-            WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, ((recipient, message) =>
+            WeakReferenceMessenger.Default.Register<TestItemsChangeMessage>(this, ((recipient, messages) =>
             {
-                var testItems = message.Value.Split('!').Where(x => x.Contains(",")).Select(x =>
-                {
-                    var m = x.Split(',');
-                    return new TestItem()
-                    {
-                        Name = m[0],
-                        Parameter = m[1],
-                        Value = m[2],
-                        Result = message.Result
-                    };
-                });
-                
-                // 保存文件
-               // SaveFile(message, testItems);
-
-                // 刷新界面
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    TestItems.Clear();
-                    foreach (var item in testItems)
+                    #region 更新测试项目,如果不存在则添加，如果存在则更新
+                    foreach (var message in messages.Value)
                     {
-                        TestItems.Add(item);
+                        var item = TestItems.FirstOrDefault(x => x.Name == message.Name);
+                        if (item == null)
+                        {
+                            TestItems.Add(message);
+                        }
+                        else
+                        {
+                            item.Value = message.Value;
+                            item.Result = message.Result;
+                        }
                     }
+                    // 通知更新testitems
+                    OnPropertyChanged(nameof(TestItems));
+                    #endregion
+
+                    // TestItems.Add(message);
                 });
             }));
+
             WeakReferenceMessenger.Default.Register<TestLog>(this, ((recipient, message) =>
             {
                 var log = new TestLog()
@@ -65,12 +65,10 @@ namespace 比亚迪AGS_WPF.ViewModels
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     TestLogs.Add(log);
-                    if(TestLogs.Count>=200)
-                        TestLogs.RemoveAt(TestLogs.Count-1);
+                    if (TestLogs.Count >= 200)
+                        TestLogs.RemoveAt(TestLogs.Count - 1);
                 });
             }));
         }
-
-        
     }
 }

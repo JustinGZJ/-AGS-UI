@@ -30,7 +30,7 @@ namespace 比亚迪AGS_WPF.Views
         public DataView()
         {
             InitializeComponent();
-             ReadFile.GetCsvFiles(AppPath.DataPath, folderList);
+             ReadFile.FilterFilesWithExtension(AppPath.DataPath, folderList);
             myTreeView.ItemsSource = folderList;
         }
 

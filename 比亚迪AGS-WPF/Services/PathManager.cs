@@ -12,6 +12,7 @@ public static class AppPath
 
     public static string ConfigPath { get; } = Path.Combine(ExePath, "Config");
     public static string DataPath { get; } = Path.Combine(ExePath, "Data");
+    public static string ScriptsPath { get; } = Path.Combine(ExePath, "Scripts");
     
     public static string AppSettingsPath { get; } = Path.Combine(ConfigPath, "AppSettings.json");
     static AppPath()
@@ -31,6 +32,10 @@ public static class AppPath
         if (!Directory.Exists(DataPath))
         {
             Directory.CreateDirectory(DataPath);
+        }
+        if (!Directory.Exists(ScriptsPath))
+        {
+            Directory.CreateDirectory(ScriptsPath);
         }
     }
 }

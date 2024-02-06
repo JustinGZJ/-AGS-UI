@@ -1,27 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Prism.Commands;
-using Workstation.ServiceModel.Ua;
+using Newtonsoft.Json;
+using Python.Runtime;
 using 比亚迪AGS_WPF.Config;
 using 比亚迪AGS_WPF.Services;
+using 比亚迪AGS_WPF.ViewModels;
 using 比亚迪AGS_WPF.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace 比亚迪AGS_WPF;
-
-public class TestItem
+public static class PyObjectExtensions
 {
-    public string Name { get; set; }
-    public string Parameter { get; set; }
-    public string Value { get; set; }
-    public string Result { get; set; }
+    public static T? Cask<T>(this PyObject pyObject)
+    {
+        return JsonConvert.DeserializeObject<T>(pyObject.ToString());
+    }
 }
 
 public class TestLog
@@ -35,20 +37,14 @@ public class TestLog
 // [Subscription(endpointUrl: "MainPLC", publishingInterval: 500, keepAliveCount: 20)]
 public partial class MainViewModel : ObservableRecipient
 {
-    
-    
-    private DelegateCommand<string>? _openCommand;
 
-    public DelegateCommand<string> OpenCommand =>
-        _openCommand ??= new DelegateCommand<string>(UiChange); //用来打开添加数据库各种模块DeleteProject
-
-    public MainViewModel(RootConfig config)
+    public MainViewModel(RootConfig config, IScriptExecutor scriptExecutor)
     {
         _config = config;
+        _scriptExecutor = scriptExecutor;
         SetupTimer();
         InitializeProperties();
-        RegisterMessageHandlers();
-        UiChange("TestLogView");
+        ContentView = new TestLogView();
     }
 
 
@@ -58,6 +54,8 @@ public partial class MainViewModel : ObservableRecipient
         Version = _config.Version;
         PhoneNumber = _config.PhoneNumber;
         Company = _config.Company;
+        // 解构赋值
+        ;
     }
 
     private void SetupTimer()
@@ -66,415 +64,74 @@ public partial class MainViewModel : ObservableRecipient
         {
             Interval = TimeSpan.FromMilliseconds(500),
         };
-        timer.Tick += ((sender, args) => { OnPropertyChanged(nameof(CurrentTIme)); });
+        timer.Tick += (_, _) => { OnPropertyChanged(nameof(CurrentTIme)); };
         timer.Start();
     }
 
-    private void RegisterMessageHandlers()
-    {
-        WeakReferenceMessenger.Default.Register<DataUploadMessage>(this, ((recipient, message) =>
-        {
-            var testItems = message.Value.Split('!').Where(x => x.Contains(",")).Select(x =>
-            {
-                var m = x.Split(',');
-                return new TestItem
-                {
-                    Name = m[0],
-                    Parameter = m[1],
-                    Value = m[2],
-                    Result = message.Result
-                };
-            });
-            // 保存文件
-            TestLogHelper.SaveFile(message, testItems);
-
-            // 刷新界面
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                TestItems.Clear();
-                foreach (var item in testItems)
-                {
-                    TestItems.Add(item);
-                }
-            });
-        }));
-
-        WeakReferenceMessenger.Default.Register<TestLog>(this, ((recipient, message) =>
-        {
-            var log = new TestLog
-            {
-                Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                Type = message.Type,
-                Log = message.Log,
-                Level = message.Level
-            };
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                TestLogs.Add(log);
-                if (TestLogs.Count > 200)
-                    TestLogs.RemoveAt(0);
-            });
-        }));
-    }
-    private void UiChange(string obj)
-    {
-        switch (obj)
-        {
-            case "开始运行":
-                ContentView = new TestLogView
-                {
-                    DataContext = this
-                };
-                break;
-            case "停止":
-                ContentView = new TestLogView
-                {
-                    DataContext = this
-                };
-                break;
-            case "监视页面":
-                ContentView = new TestLogView
-                {
-                    DataContext = this
-                };
-                break;
-            case "配置信息":
-                ContentView = new ConfigView();
-                break;
-            case "数据查询":
-                ContentView = new DataView();
-                break;
-            case "用户变更":
-                ContentView = new UserView();
-                break;
-            case "用户操作":
-                ContentView = new ScannerView();
-                break;
-        }
-        
-        ContentView = obj switch
-        {
-            "TestLogView" => new TestLogView
-            {
-                DataContext = this
-            },
-            "UserView" => new UserView(),
-            "ConfigView" => new ConfigView(),
-            "EnquireView" => new DataView(),
-            "ScannerView" => new ScannerView(),
-            _ => ContentView
-        };
-    }
-
     #region fields
-
-    private ServerStatusDataType? _serverServerStatus;
+    [ObservableProperty]
     private string? _title;
+    [ObservableProperty]
     private string? _version;
+    [ObservableProperty]
     private string _productBarcode = "产品条码";
+    [ObservableProperty]
     private string _userName = "作业员";
+    [ObservableProperty]
     private string _mode = "本地模式";
+    [ObservableProperty]
     private string _productId = "产品编码";
+    [ObservableProperty]
     private string _productCode = "产品代码";
+    [ObservableProperty]
     private string _fixtureBinding = "01";
+    [ObservableProperty]
     private string _productName = "产品1";
-    private string _runningStatus = "运行";
+    [ObservableProperty]
+    private string _runningStatus = "待机";
+    [ObservableProperty]
     private string _operationPrompt = "操作提示";
+    [ObservableProperty]
     private int _totalCount;
+    [ObservableProperty]
     private int _maintenance;
+    [ObservableProperty]
     private int _workOderQty;
-
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(YieldRate))]
     private int _completeQty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(YieldRate))]
     private int _okQty;
+    [ObservableProperty]
     private string? _phoneNumber;
-    private bool _robotStatus;
-    private bool _alarmStatus;
+    [ObservableProperty]
     private string _productStatus = "OK";
+    [ObservableProperty]
     private int _productTime;
+    [ObservableProperty]
     private object? _contentView;
-    private bool _hartBeat;
-    private string? _pcScan;
-    private bool _pcScanDone;
+    [ObservableProperty]
+    private bool _heartBeat;
+    [ObservableProperty]
     private int _cycleTime;
+    [ObservableProperty]
     private int _lastCycleTime;
-
-    #endregion
-
-    #region properties
-
-
+    
+    [ObservableProperty]
     private ObservableCollection<StatusItem> _statusItems = new()
     {
-        new StatusItem { Name = "PLC", Status = Brushes.Gray },
-        new StatusItem { Name = "MES", Status = Brushes.Red },
-        new StatusItem { Name = "OPC", Status = Brushes.Gray },
-        new StatusItem { Name = "TCP", Status = Brushes.Gray }
+        new StatusItem { Name = "PLC", Status = false },
+        new StatusItem { Name = "MES", Status = false }
     };
-
-    public ObservableCollection<StatusItem> StatusItems
-    {
-        get => _statusItems;
-        set => SetProperty(ref _statusItems, value);
-    }
     
-    
-
-
-
-    
-
-
-    /// <summary>
-    /// 产品状态
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品状态")]
-    public string ProductStatus
-    {
-        get => _productStatus;
-        set => SetProperty(ref _productStatus, value);
-    }
-    
-    
-
-
-    /// <summary>
-    /// 标题
-    /// </summary>
-    public string? Title
-    {
-        get => _title;
-        private set => SetProperty(ref _title, value);
-    }
-
-    /// <summary>
-    /// 版本
-    /// </summary>
-
-    public string? Version
-    {
-        get => _version;
-        private set => SetProperty(ref _version, value);
-    }
-
-    /// <summary>
-    /// 生产时间
-    /// </summary>
-    public int ProductTime
-    {
-        get => _productTime;
-        set => SetProperty(ref _productTime, value);
-    }
-
-    /// <summary>
-    /// 产品条码
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品条码")]
-    public string ProductBarcode
-    {
-        get => _productBarcode;
-        set => SetProperty(ref _productBarcode, value);
-    }
-
-    /// <summary>
-    /// 当前用户名
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.作业员")]
-    public string UserName
-    {
-        get => _userName;
-        set => SetProperty(ref _userName, value);
-    }
-
-    /// <summary>
-    /// 模式
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.模式")]
-    public string Mode
-    {
-        get => _mode;
-        set => SetProperty(ref _mode, value);
-    }
-
-    /// <summary>
-    /// 产品编码
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品编码")]
-    public string ProductId
-    {
-        get => _productId;
-        set => SetProperty(ref _productId, value);
-    }
-
-    /// <summary>
-    /// 产品名称
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品名称")]
-    public string ProductName
-    {
-        get => _productName;
-        set => SetProperty(ref _productName, value);
-    }
-
-
-    /// <summary>
-    /// 产品代码
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.产品代码")]
-    public string ProductCode
-    {
-        get => _productCode;
-        set => SetProperty(ref _productCode, value);
-    }
-
-    /// <summary>
-    /// 工装绑定
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.工装绑定")]
-    public string FixtureBinding
-    {
-        get => _fixtureBinding;
-        set => SetProperty(ref _fixtureBinding, value);
-    }
-
-    /// <summary>
-    /// 公司
-    /// </summary>
+    [ObservableProperty]
     private string? _company;
-
+    
     private readonly RootConfig _config;
-
-    public string? Company
-    {
-        get => _company;
-        set => SetProperty(ref _company, value);
-    }
-
-    /// <summary>
-    /// 联系电话
-    /// </summary>
-
-    public string? PhoneNumber
-    {
-        get => _phoneNumber;
-        set => SetProperty(ref _phoneNumber, value);
-    }
-
-    /// <summary>
-    /// 运行状态
-    /// </summary>
-    ///
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.运行状态")]
-    public string RunningStatus
-    {
-        get => _runningStatus;
-        set => SetProperty(ref _runningStatus, value);
-    }
-
-    /// <summary>
-    /// 操作提示
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.操作提示")]
-    public string OperationPrompt
-    {
-        get => _operationPrompt;
-        set => SetProperty(ref _operationPrompt, value);
-    }
-
-    /// <summary>
-    /// 总次数
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.总次数")]
-    public int TotalCount
-    {
-        get => _totalCount;
-        set => SetProperty(ref _totalCount, value);
-    }
-
-    /// <summary>
-    /// 保养计数
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.保养计数")]
-    public int Maintenance
-    {
-        get => _maintenance;
-        set => SetProperty(ref _maintenance, value);
-    }
-
-    /// <summary>
-    /// 工单数量
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.工单数量")]
-    public int WorkOderQty
-    {
-        get => _workOderQty;
-        set => SetProperty(ref _workOderQty, value);
-    }
-
-
-    /// <summary>
-    /// 心跳， OPC库
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.心跳")]
-    public bool HeartBeat
-    {
-        get => _hartBeat;
-        set => SetProperty(ref _hartBeat, value);
-    }
-
-    /// <summary>
-    /// 完成数
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.完成数")]
-
-    public int CompleteQty
-    {
-        get => _completeQty;
-        set
-        {
-            SetProperty(ref _completeQty, value);
-            OnPropertyChanged(nameof(YieldRate));
-        }
-    }
-
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.周期时间")]
-    public int CycleTime
-    {
-        get => _cycleTime;
-        set { SetProperty(ref _cycleTime, value); }
-    }
-
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.上一次周期")]
-    public int LastCycleTime
-    {
-        get => _lastCycleTime;
-        set => SetProperty(ref _lastCycleTime, value);
-    }
-
-
-    /// <summary>
-    /// 合格数
-    /// </summary>
-    [MonitoredItem(nodeId: "ns=4;s=MES_交互.合格数")]
-    public int OkQty
-    {
-        get => _okQty;
-        set
-        {
-            SetProperty(ref _okQty, value);
-            OnPropertyChanged(nameof(YieldRate));
-        }
-    }
-
-    public object? ContentView
-    {
-        get => _contentView;
-        private set => SetProperty(ref _contentView, value);
-    }
-
-    /// <summary>
-    /// 合格率
-    /// </summary>
-    public string YieldRate => _completeQty > 0 ? (_okQty * 1.0 / _completeQty).ToString("P2") : 0.ToString("P2");
+    private readonly IScriptExecutor _scriptExecutor;
+    
+    public string YieldRate => CompleteQty > 0 ? (OkQty * 1.0 / CompleteQty).ToString("P2") : 0.ToString("P2");
 
     /// <summary>
     /// 当前时间
@@ -482,12 +139,6 @@ public partial class MainViewModel : ObservableRecipient
 
     public string CurrentTIme => DateTime.Now.ToString("G");
 
-    /// <summary>
-    /// 测试项目
-    /// </summary>
-    public ObservableCollection<TestItem> TestItems { get; } = new();
-
-    public ObservableCollection<TestLog> TestLogs { get; set; } = new();
 
     #endregion
 
@@ -502,6 +153,61 @@ public partial class MainViewModel : ObservableRecipient
         if (result == MessageBoxResult.Yes)
             Application.Current.Shutdown();
     }
+        
+    [RelayCommand]
+    private void Open(string obj)
+    {
+        switch (obj)
+        {
+            case "开始运行":
+                ContentView = new TestLogView();
+                // 提示是否开始测试
+                var result = MessageBox.Show("是否开始测试？", "提示", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    // 开始测试
+                    WeakReferenceMessenger.Default.Send(new TestLog
+                    {
+                        Type = "系统",
+                        Log = "开始测试",
+                        Level = "Info"
+                    });
+                    PyObject data = _scriptExecutor.Execute("Scripts.Inst", "main");
+
+                    var testItems = data.Cask<List<TestItem>>();
+                    
+                    WeakReferenceMessenger.Default.Send(new TestItemsChangeMessage(testItems));
+
+                    WeakReferenceMessenger.Default.Send(new TestLog
+                    {
+                        Type = "系统",
+                        Log = data.ToString(),
+                        Level = "Info"
+                    });
+                }
+
+                break;
+            case "停止":
+                ContentView = new TestLogView();
+                break;
+            case "监视页面":
+                ContentView = new ScriptsView();
+                break;
+            case "配置信息":
+                ContentView = new ConfigView();
+                break;
+            case "数据查询":
+                ContentView = new DataView();
+                break;
+            case "用户变更":
+                ContentView = new UserView();
+                break;
+            case "用户操作":
+                ContentView = new PlotView();
+                break;
+        }
+    }
+
 
     #endregion
 }
@@ -509,5 +215,5 @@ public partial class MainViewModel : ObservableRecipient
 public partial class StatusItem : ObservableObject
 {
     [ObservableProperty] private string? _name;
-    [ObservableProperty] private Brush? _status;
+    [ObservableProperty] private bool? _status;
 }

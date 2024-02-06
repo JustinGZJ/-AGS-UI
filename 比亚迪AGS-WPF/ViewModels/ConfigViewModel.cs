@@ -8,8 +8,8 @@ namespace 比亚迪AGS_WPF.ViewModels;
 
 public partial class ConfigViewModel : ObservableObject
 {
-    public RootConfig Config { get; }
-    readonly string _fileName = Path.Combine(AppPath.ConfigPath, "AppSettings.json");
+    public RootConfig? Config { get; }
+    readonly string _fileName = AppPath.AppSettingsPath;
 
     public ConfigViewModel()
     {

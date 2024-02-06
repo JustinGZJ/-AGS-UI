@@ -24,16 +24,17 @@ public static class ListBoxExtensions
     {
         if (d is ListBox listView)
         {
-            listView.Loaded += (s, e) =>
+            listView.Loaded += (_, _) =>
             {
                 var incc = CollectionViewSource.GetDefaultView(listView.ItemsSource) as INotifyCollectionChanged;
                 if (incc != null)
                 {
-                    incc.CollectionChanged += (s, e) =>
+                    incc.CollectionChanged += (_, e) =>
                     {
                         if (e.Action == NotifyCollectionChangedAction.Add)
                         {
-                            var newItem = e.NewItems[e.NewItems.Count - 1];
+                            var newItem = e.NewItems?[^1];
+                            if (newItem == null) return;
                             listView.ScrollIntoView(newItem);
                             listView.SelectedItem = newItem;
                         }

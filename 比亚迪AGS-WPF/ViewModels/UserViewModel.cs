@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -28,13 +29,10 @@ public partial class UserViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(DeleteUserCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpdateUserCommand))]
     private User _selectedUser;
-    ConfigData<User> userConfig = new(Path.Combine(AppPath.ConfigPath ,"user.json"));
-    
     public UserViewModel()
     {
-        Users = new ObservableCollection<User>();
-userConfig.Load();
-        this.Users= new ObservableCollection<User>( userConfig.Data);
+        var users = ConfigHelper.LoadConfig<List<User>>("user.json");
+        this.Users= new ObservableCollection<User>(users);
     }
 
     [RelayCommand(CanExecute = nameof(CanAddUser))]
@@ -69,10 +67,8 @@ userConfig.Load();
     }
     [RelayCommand]
     private void SaveUser()
-    {
-        userConfig.Data = Users.ToList();
-        userConfig.Save();
-        
+    {   
+        ConfigHelper.SaveConfig(this.Users.ToList(), "user.json");
     }
 
     public string[] UserLevels => new[] {"USER", "ADMIN","QE","PE"};

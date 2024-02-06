@@ -12,9 +12,7 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
                
                 <ResourceDictionary>
-                    <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" />
-                    <converters:RunningStatusColorConverter x:Key="RunningStatusColorConverter"></converters:RunningStatusColorConverter>
-                    <converters:TestResultColorConverter x:Key="TestResultColorConverter"></converters:TestResultColorConverter>
+                
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

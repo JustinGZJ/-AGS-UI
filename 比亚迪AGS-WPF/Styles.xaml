@@ -3,9 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Accessibility;assembly=Accessibility"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:controls="clr-namespace:HandyControl.Controls">
+    xmlns:controls="clr-namespace:HandyControl.Controls"
+    xmlns:converters="clr-namespace:比亚迪AGS_WPF.Converters"
+    xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
+    xmlns:views="clr-namespace:比亚迪AGS_WPF.Views">
 
-
+    <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" />
+    <converters:RunningStatusColorConverter x:Key="RunningStatusColorConverter"></converters:RunningStatusColorConverter>
+    <converters:TestResultColorConverter x:Key="TestResultColorConverter"></converters:TestResultColorConverter>
     <!--  mainwindow 底部按钮  -->
     <Style x:Key="LbbStyle" TargetType="Button">
         <Setter Property="Background">
@@ -131,13 +136,13 @@
         
     </Style>
     
-    <DataTemplate x:Key="StatusTemplate">
+    <DataTemplate x:Key="StatusTemplate" >
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="23*" />
                 <RowDefinition Height="12*" />
             </Grid.RowDefinitions>
-            <Ellipse Fill="{Binding Status, Mode=OneWay}" MinWidth="30" MinHeight="30" Style="{StaticResource LedStatus}" />
+            <Ellipse Fill="{Binding Status,Converter={StaticResource BoolToBrushConverter},ConverterParameter='Lime', Mode=OneWay}" MinWidth="30" MinHeight="30" Style="{StaticResource LedStatus}" />
             <Border Grid.Row="1" Style="{StaticResource StatusBorder}">
                 <TextBlock
                     Grid.Row="1"
@@ -148,5 +153,8 @@
                 </TextBlock>
             </Border>
         </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:XyPlotViewModel}">
+        <views:XyPlotView />
     </DataTemplate>
 </ResourceDictionary>

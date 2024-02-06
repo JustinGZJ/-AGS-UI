@@ -10,13 +10,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Workstation.ServiceModel.Ua;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration.Json;
 using Serilog;
-using SimpleTCP;
 using 比亚迪AGS_WPF.Services;
 using 比亚迪AGS_WPF.ViewModels;
 using Newtonsoft.Json;
@@ -34,16 +32,31 @@ namespace 比亚迪AGS_WPF
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Services = ConfigureServices();
-
-         //   PropertyGridEditorHelper.RegisterEditor(typeof(List<>), typeof(MyCustomListEditor));
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                Log.CloseAndFlush();
+            };
             this.InitializeComponent();
+            
+            
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            // This method will be called when an unhandled exception occurs
+            // You can add your own logic here, for example logging the exception
+            Exception exception = (Exception)e.ExceptionObject;
+            MessageBox.Show("Unhandled exception: " + exception.Message, "Error", MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Log.Error("Unhandled exception: " + exception.Message, exception);
         }
 
         /// <summary>
         /// Gets the current <see cref="App"/> instance in use
         /// </summary>
-        public new static App Current => (App) Application.Current;
-        
+        public new static App Current => (App)Application.Current;
+
         public IConfigurationRoot Config { get; private set; }
 
         /// <summary>
@@ -58,12 +71,11 @@ namespace 比亚迪AGS_WPF
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day,retainedFileCountLimit:20)
+                .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 20)
                 .CreateLogger();
-            
-            Services.GetService<TcpServerService>();
 
-
+            var clientWrapper =Services.GetRequiredService<IMqttClientService>();
+            clientWrapper.ConnectAsync();
             // Create and show the main view.
         }
 
@@ -73,33 +85,32 @@ namespace 比亚迪AGS_WPF
         private IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
-            // services
-            Config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("AppSettings.json", true)
-                .AddJsonFile("Users.json",true)
-                .Build();
 
-
-           
-            services.AddSingleton<IConfiguration>(Config);
+            var config = ConfigHelper.LoadConfig<RootConfig>(AppPath.AppSettingsPath);
+            
 
             services.AddLogging(logging =>
             {
                 logging.ClearProviders();
                 logging.AddSerilog();
             });
-            
-            services.AddSingleton<TcpServerService>();
+
             // viewmodels
+            services.AddSingleton(config);
             services.AddSingleton<MainViewModel>();
-            services.AddTransient<ConfigViewModel>(); 
-            services.AddTransient<EnquireViewModel>();
+            services.AddTransient<ConfigViewModel>();
             services.AddSingleton<TestLogViewModel>();
             services.AddTransient<UserViewModel>();
             services.AddTransient<ScannerViewModel>();
-            services.AddSingleton(ConfigHelper.LoadConfig<RootConfig>( AppPath.AppSettingsPath));
-
+            
+            services.AddTransient<PlotViewModel>();
+            services.AddTransient<XyPlotViewModel>();
+                       
+            services.AddTransient<IScriptExecutor>(serviceProvider => new PythonExecutor(config.PythonPath));
+            // services.AddSingleton(new MqttClientWrapper(config.MqttBrokerAddress, config.MqttBrokerPort));
+            services.AddSingleton<IMqttClientWrapper>(serviceProvider => new MqttClientWrapper(config.MqttBrokerAddress, config.MqttBrokerPort));
+            services.AddSingleton<IMqttClientService, MqttClientService>();
+            // services.AddSingleton(new PythonExecutor(config.PythonPath));
             return services.BuildServiceProvider();
         }
     }
