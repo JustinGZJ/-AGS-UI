@@ -1,42 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using OxyPlot;
+using 比亚迪AGS_WPF.DataObject;
+using 比亚迪AGS_WPF.Utils;
 
 namespace 比亚迪AGS_WPF.ViewModels;
 
-public partial class PlotViewModel: ObservableObject
+public partial class PlotViewModel : ObservableRecipient, IRecipient<ScriptResponse>
 {
-    [ObservableProperty]
-    ObservableCollection<XyPlotViewModel> _xyPlotViewModels = new();
+    [ObservableProperty] ObservableCollection<XyPlotViewModel> _xyPlotViewModels = new();
 
     public PlotViewModel()
     {
-        Random random = new Random();
-        for (int i = 0; i < 2; i++)
-        {
-            XyPlotViewModel xyPlotViewModel = new();
-            xyPlotViewModel.SetTitleAndAxis($"Plot {i}", "Freq(Hz)", "Loss(dB)");
-            // 添加Series1
-            xyPlotViewModel.AddOrUpdateSeries("Series1", GenerateRandomDataPoints(random, 3), System.Drawing.Color.Red);
-            // 添加Series2
-            xyPlotViewModel.AddOrUpdateSeries("Series2", GenerateRandomDataPoints(random, 3), System.Drawing.Color.Blue);
-            // 添加Series3
-            xyPlotViewModel.AddOrUpdateSeries("Series3", GenerateRandomDataPoints(random, 3), System.Drawing.Color.Green);
-
-            XyPlotViewModels.Add(xyPlotViewModel);
-        }
+        IsActive = true;
     }
 
-    private List<DataPoint> GenerateRandomDataPoints(Random random, int count)
+    public void Receive(ScriptResponse message)
     {
-        List<DataPoint> dataPoints = new List<DataPoint>();
-        for (int i = 0; i < count; i++)
+        if (message.Topic == "Measure")
         {
-            double y = random.NextDouble() * 100; // Generate a random y value between 0 and 100
-            dataPoints.Add(new DataPoint(i, y));
+            // 使用ui线程更新
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                XyPlotViewModels.Clear();
+                var measure = message.Result.Cask<Measure>();
+                var groups = measure.TestItems.GroupBy(x => x.Category);
+                foreach (var group in groups)
+                {
+                    if (!group.All(x => double.TryParse(x.Name, out double _)))
+                        return;
+                    var xyPlotViewModel = new XyPlotViewModel();
+                    xyPlotViewModel.SetTitleAndAxis(group.Key, "Freq", "dB");
+
+                    var dataPoints = group.Select(x => new
+                    {
+                        Name = double.Parse(x.Name),
+                        Value = (double)x.Value!,
+                        Upper = (double)x.Upper!,
+                        Lower = (double)x.Lower!
+                    }).ToList();
+                    xyPlotViewModel.AddOrUpdateSeries("Value", 
+                        dataPoints.Select(x => new DataPoint(x.Name, x.Value)).ToList(),
+                        System.Drawing.Color.Blue);
+                    xyPlotViewModel.AddOrUpdateSeries("Upper", 
+                        dataPoints.Select(x => new DataPoint(x.Name, x.Upper)).ToList(),
+                        System.Drawing.Color.Red);
+                    xyPlotViewModel.AddOrUpdateSeries("Lower",
+                        dataPoints.Select(x => new DataPoint(x.Name, x.Lower)).ToList(),
+                        System.Drawing.Color.OrangeRed);
+                    XyPlotViewModels.Add(xyPlotViewModel);
+                }
+            });
         }
-        return dataPoints;
     }
 }

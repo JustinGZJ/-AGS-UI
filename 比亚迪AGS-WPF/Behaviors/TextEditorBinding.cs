@@ -1,45 +1,57 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using ICSharpCode.AvalonEdit;
 
 namespace 比亚迪AGS_WPF.Behaviors;
 
-// public static class TextEditorBinding
-// {
-//     public static readonly DependencyProperty TextProperty =
-//         DependencyProperty.RegisterAttached("Text", typeof(string), typeof(TextEditorBinding), new PropertyMetadata(null, TextChanged));
-//
-//     public static string GetText(DependencyObject obj)
-//     {
-//         return (string)obj.GetValue(TextProperty);
-//     }
-//
-//     public static void SetText(DependencyObject obj, string value)
-//     {
-//         obj.SetValue(TextProperty, value);
-//     }
-//
-//     private static void TextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-//     {
-//         if (obj is TextEditor textEditor)
-//         {
-//             if (e.OldValue != null)
-//             {
-//                 textEditor.TextChanged -= TextEditor_TextChanged;
-//             }
-//
-//             if (e.NewValue != null)
-//             {
-//                 textEditor.TextChanged += TextEditor_TextChanged;
-//             }
-//         }
-//     }
-//
-//     private static void TextEditor_TextChanged(object sender, EventArgs e)
-//     {
-//         if (sender is TextEditor textEditor)
-//         {
-//             SetText(textEditor, textEditor.Text);
-//         }
-//     }
-// }
+public static class TextEditorExtensions
+{
+    public static readonly DependencyProperty CodeTextProperty =
+        DependencyProperty.RegisterAttached(
+            "CodeText",
+            typeof(string),
+            typeof(TextEditorExtensions),
+            new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                PropertyChangedCallback));
+
+    private static void PropertyChangedCallback(DependencyObject dependencyObject,
+        DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+    {
+        var textEditor = dependencyObject as TextEditor;
+        if (textEditor != null)
+        {
+            if (dependencyPropertyChangedEventArgs.NewValue != null)
+            {
+                // Save the caret offset.
+                var caretOffset = textEditor.CaretOffset;
+
+                // Update the text.
+                textEditor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
+
+                // Restore the caret offset.
+                textEditor.CaretOffset = caretOffset;
+            }
+
+            textEditor.TextChanged += (sender, args) =>
+            {
+                // Save the caret offset.
+                var caretOffset = textEditor.CaretOffset;
+
+                // Update the CodeText property.
+                SetCodeText(textEditor, textEditor.Document.Text);
+
+                // Restore the caret offset.
+                textEditor.CaretOffset = caretOffset;
+            };
+        }
+    }
+
+    public static void SetCodeText(UIElement element, string value)
+    {
+        element.SetValue(CodeTextProperty, value);
+    }
+
+    public static string GetCodeText(UIElement element)
+    {
+        return (string)element.GetValue(CodeTextProperty);
+    }
+}

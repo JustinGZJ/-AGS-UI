@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using 比亚迪AGS_WPF.Config;
 
 namespace 比亚迪AGS_WPF.Services;
 
@@ -11,8 +13,8 @@ public static class AppPath
     
 
     public static string ConfigPath { get; } = Path.Combine(ExePath, "Config");
-    public static string DataPath { get; } = Path.Combine(ExePath, "Data");
-    public static string ScriptsPath { get; } = Path.Combine(ExePath, "Scripts");
+    public static string? DataPath=>App.Current.Services.GetService<RootConfig>()?.DataPath;
+    public static string? ScriptsPath=>App.Current.Services.GetService<RootConfig>()?.PythonScriptHome;
     
     public static string AppSettingsPath { get; } = Path.Combine(ConfigPath, "AppSettings.json");
     static AppPath()

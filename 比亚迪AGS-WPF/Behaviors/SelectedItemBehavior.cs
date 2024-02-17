@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 
 
 namespace 比亚迪AGS_WPF.Behaviors;
@@ -10,7 +10,7 @@ public class BindableSelectedItemBehavior : Behavior<TreeView>{
 
     public object SelectedItem
     {
-        get { return (object)GetValue(SelectedItemProperty); }
+        get { return GetValue(SelectedItemProperty); }
         set { SetValue(SelectedItemProperty, value); }
     }
 

@@ -2,13 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using 比亚迪AGS_WPF.DataObject;
 using 比亚迪AGS_WPF.Services;
 
-namespace 比亚迪AGS_WPF;
+namespace 比亚迪AGS_WPF.Utils;
 
 public static class TestLogHelper
 {
-    public static void SaveFile(Dictionary<string, string> message, IEnumerable<ViewModels.TestItem> testItems)
+    
+    public static void SaveMeasureLog(Measure measure)
+    {
+        var dictionary = new Dictionary<string, string>
+        {
+            {"Time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
+            {"Operator", "Operator"},
+            {"Category", measure.Name},
+            {"Result", measure.Result},
+        };
+        SaveFile(dictionary, measure.TestItems);
+    }
+
+    private static void SaveFile(Dictionary<string, string> message, IEnumerable<ViewModels.TestItem> testItems)
     {
         var directoryPath = AppPath.DataPath;
         var fileName = GenerateFileName(directoryPath);
@@ -18,7 +32,7 @@ public static class TestLogHelper
     }
 
 
-    private static string GenerateFileName(string directoryPath)
+    private static string GenerateFileName(string? directoryPath)
     {
         return Path.Combine(directoryPath, DateTime.Now.ToString("yyyy-MM-dd") + ".csv");
     }
@@ -28,9 +42,8 @@ public static class TestLogHelper
     {
         foreach (var item in testItems)
         {
-            dictionary.TryAdd(item.Name, item.Value.Trim());
+           dictionary.TryAdd($"{item.Category} {item.Name}({item.Upper} {item.Unit} - {item.Lower} {item.Unit})", $"{item.Value}");
         }
-
         return dictionary;
     }
 

@@ -1,11 +1,52 @@
 import pyvisa as visa
 import logging
 import requests
+import os
+import time
 
-logging.basicConfig(level=logging.DEBUG, filemode='w', filename="./logs/LC.log",
+TestItems = [
+    {
+        "Name": "DC+ - DC+'",
+        "Category": "Inductance",
+        "Lower": 36.1,
+        "Upper": 60.1,
+        "Unit": "uH"
+    },
+    {
+        "Name": "DC- - DC-'",
+        "Category": "Inductance",
+        "Lower": 36.2,
+        "Upper": 60.2,
+        "Unit": "uH"
+    },
+    {
+        "Name": "DC+ - DC-",
+        "Category": "Capacitance",
+        "Lower": 10.4,
+        "Upper": 15.5,
+        "Unit": "uF"
+    },
+    {
+        "Name": "DC+ - GND",
+        "Category": "Capacitance",
+        "Lower": 2.1,
+        "Upper": 3.2,
+        "Unit": "uF"
+    },
+    {
+        "Name": "DC- - GND",
+        "Category": "Capacitance",
+        "Lower": 2.1,
+        "Upper": 3.2,
+        "Unit": "uF"
+    }
+]
+
+logging.basicConfig(level=logging.DEBUG, filemode='w', filename="LC.log",
                     format='%(asctime)s - %(levelname)s - %(message)s', encoding='utf-8')
-# e4890_resouce= '''TCPIP0::192.168.1.14::inst0::INSTR'''
+# e4890_resouce= '''USB0::0x2A8D::0x2F01::MY46624897::INSTR'''
 e4890_resouce = '''USB0::0x2A8D::0x2F01::MY46624897::INSTR'''
+relay_delay = 0.5
 
 
 def connect_device(resource):
@@ -96,7 +137,7 @@ def measure(device):
 def main():
     plc_step_addr = "D6080"
     # 清除 D5080/D6081 D6082
-    write_plc(plc_step_addr, 0)
+    write_plc('D5080', 0)
     write_plc('D6081', 0)
     write_plc('D6082', 0)
     # 连接设备
@@ -105,41 +146,119 @@ def main():
     # 测量电感 DC+ - DC+'
     config_ls(device)
     result = measure(device)
-    logging.debug(result)
+    print(result)
+    logging.debug(result + '\n')
+    # -1.22084E+02,+9.47753E+05,+0 提取电感值
+    result = result.split(',')
+    result = float(result[0]) * 1000000
+    TestItems[0]['Value'] = result
+
+    # 根据上下限判断是否合格
+    if TestItems[0]['Lower'] < result < TestItems[0]['Upper']:
+        TestItems[0]['Result'] = 'PASS'
+    else:
+        TestItems[0]['Result'] = 'FAIL'
     write_plc(plc_step_addr, 1)
+    time.sleep(relay_delay)
 
     # 测量电感 DC- - DC-'
     config_ls(device)
     result = measure(device)
     logging.debug(result)
+    print(result + '\n')
+
+    # -1.22084E+02,+9.47753E+05,+0 提取电感值
+    result = result.split(',')
+    result = float(result[0]) * 1000000
+    TestItems[1]['Value'] = result
+
+    # 根据上下限判断是否合格
+    if TestItems[1]['Lower'] < result < TestItems[1]['Upper']:
+        TestItems[1]['Result'] = 'PASS'
+    else:
+        TestItems[1]['Result'] = 'FAIL'
+
     write_plc(plc_step_addr, 2)
+    time.sleep(relay_delay)
 
     # 测量电容 DC+ - DC-
     config_cap(device)
     result = measure(device)
     logging.debug(result)
+    print(result + '\n')
     write_plc(plc_step_addr, 3)
+    time.sleep(relay_delay)
+
+    # -1.22084E+02,+9.47753E+05,+0 提取电感值
+    result = result.split(',')
+    result = float(result[0]) * 1000000
+    TestItems[2]['Value'] = result
+
+    # 根据上下限判断是否合格
+    if TestItems[2]['Lower'] < result < TestItems[2]['Upper']:
+        TestItems[2]['Result'] = 'PASS'
+    else:
+        TestItems[2]['Result'] = 'FAIL'
 
     # 测量电容 DC+ - gnd
     config_cap(device)
     result = measure(device)
     logging.debug(result)
+    print(result + '\n')
     write_plc(plc_step_addr, 4)
+    time.sleep(relay_delay)
+    # -1.22084E+02,+9.47753E+05,+0 提取电感值
+    result = result.split(',')
+    result = float(result[0]) * 1000000
+    TestItems[3]['Value'] = result
+
+    # 根据上下限判断是否合格
+    if TestItems[3]['Lower'] < result < TestItems[3]['Upper']:
+        TestItems[3]['Result'] = 'PASS'
+    else:
+        TestItems[3]['Result'] = 'FAIL'
 
     # 测量电容 DC- - gnd
     config_cap(device)
     result = measure(device)
-    logging.debug(result)
+    logging.debug(result + '\n')
     write_plc(plc_step_addr, 5)
-    # 通知完成测试
-    write_plc(plc_step_addr, 10)
+    print(result)
     logging.debug(result)
+
+    # -1.22084E+02,+9.47753E+05,+0 提取电感值
+    result = result.split(',')
+    result = float(result[0]) * 1000000
+    TestItems[4]['Value'] = result
+
+    # 根据上下限判断是否合格
+    if TestItems[4]['Lower'] < result < TestItems[4]['Upper']:
+        TestItems[4]['Result'] = 'PASS'
+    else:
+        TestItems[4]['Result'] = 'FAIL'
+    # 通知完成测试
+
+    # 输出结果
+    # 如果testitems[0] 和 testitems[1] 都是PASS,则给PLC写1，否则写2
+    if TestItems[0]['Result'] == 'PASS' and TestItems[1]['Result'] == 'PASS':
+        write_plc("D6081", 1)
+    else:
+        write_plc("D6081", 2)
+    # 如果testitems[2] 和 testitems[3] 和 testitems[4] 都是PASS,则给PLC写1，否则写2
+    if TestItems[2]['Result'] == 'PASS' and TestItems[3]['Result'] == 'PASS' and TestItems[4]['Result'] == 'PASS':
+        write_plc("D6082", 1)
+    else:
+        write_plc("D6082", 2)
+
+    write_plc(plc_step_addr, 10)
     # 关闭设备
     close_device(device)
+    return TestItems
 
 
 if __name__ == '__main__':
-    main()
+    result = main()
+    print(result)
 
 # :FUNC:IMP LSRS;  
 # :FUNC:IMP:RANG:AUTO ON;  OK

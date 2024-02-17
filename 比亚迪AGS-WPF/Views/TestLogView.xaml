@@ -6,62 +6,37 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfExtensions="clr-namespace:比亚迪AGS_WPF.WpfExtensions"
     xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
+    xmlns:views="clr-namespace:比亚迪AGS_WPF.Views"
     d:DesignHeight="450"
     d:DesignWidth="800"
     d:DataContext="{d:DesignInstance viewModels:TestLogViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid x:Name="Lbsheet1" Grid.Row="0">
-            <DataGrid
-                AutoGenerateColumns="False"
-                FontSize="16"
-                IsReadOnly="True"
-                ItemsSource="{Binding TestItems, Mode=OneWay}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Name}"
-                        Header="名称" />
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Lower}"
-                        Header="下限">
-                    </DataGridTextColumn>
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Upper}"
-                        Header="上限" />
-                    <DataGridTemplateColumn></DataGridTemplateColumn>
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Value}"
-                        Header="值" />
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Result}"
-                        Header="结果" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-        <Grid Grid.Row="1">
-            <DataGrid AutoGenerateColumns="False" wpfExtensions:DataGridExtensions.AutoScroll="True"
-                      ItemsSource="{Binding TestLogs}" PresentationTraceSources.TraceLevel="High">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Time}"
-                        Header="时间" />
-                    <DataGridTextColumn
-                        Width="3*"
-                        Binding="{Binding Log}"
-                        Header="消息" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+    <Grid x:Name="Lbsheet1">
+        <TabControl>
+            <TabItem Header="测试数据">
+                <ContentControl Content="{Binding TestItemsViewModel}"></ContentControl>
+            </TabItem>
+            <TabItem Header="图表">
+                <ContentControl Content="{Binding PlotViewModel}"></ContentControl>
+            </TabItem>
+            <TabItem Header="日志">
+                <DataGrid AutoGenerateColumns="False" wpfExtensions:DataGridExtensions.AutoScroll="True"
+                          ItemsSource="{Binding TestLogs}" PresentationTraceSources.TraceLevel="High">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Time}"
+                            Header="时间" />
+                        <DataGridTextColumn
+                            Width="3*"
+                            Binding="{Binding Log}"
+                            Header="消息" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+        </TabControl>
+
     </Grid>
 
 </UserControl>

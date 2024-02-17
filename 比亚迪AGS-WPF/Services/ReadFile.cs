@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using System.IO;
 using System.Collections.ObjectModel;
 using 比亚迪AGS_WPF.ViewModels;
 using System.Data;
@@ -14,7 +9,7 @@ namespace 比亚迪AGS_WPF.Services
 {
     public static class ReadFile
     {
-        public static DataTable ReadCsvFile(string filePath)
+        public static DataTable ReadCsvFile(string? filePath)
         {
             DataTable dataTable = new DataTable();
 
@@ -56,13 +51,14 @@ namespace 比亚迪AGS_WPF.Services
         }
 
 
-        public static void FilterFilesWithExtension(string folderPath, ObservableCollection<FileSystemItem> folderList,string filter = "csv")
+        public static void FilterFilesWithExtension(string? folderPath, ObservableCollection<FileSystemItem> folderList,string filter = "csv")
         {
+            folderPath ??= AppPath.ScriptsPath;
             // Process the list of files found in the directory.
             string[] fileEntries = Directory.GetFiles(folderPath);
             foreach (string fileName in fileEntries)
             {
-                FileInfo fileInfo = new FileInfo(fileName);
+                var fileInfo = new FileInfo(fileName);
                 if (fileInfo.Extension == ($".{filter}"))
                 {
                     folderList.Add(new FileSystemItem()
@@ -74,8 +70,8 @@ namespace 比亚迪AGS_WPF.Services
                 }
             }
             // Recurse into subdirectories of this directory.
-            string[] subdirectoryEntries = Directory.GetDirectories(folderPath);
-            foreach (string subdirectory in subdirectoryEntries)
+            string?[] subdirectoryEntries = Directory.GetDirectories(folderPath);
+            foreach (string? subdirectory in subdirectoryEntries)
             {
                var item =(new FileSystemItem()
                 {

@@ -1,25 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration.Json;
 using Serilog;
 using 比亚迪AGS_WPF.Services;
 using 比亚迪AGS_WPF.ViewModels;
-using Newtonsoft.Json;
 using 比亚迪AGS_WPF.Config;
-using 比亚迪AGS_WPF.Views;
 
 namespace 比亚迪AGS_WPF
 {
@@ -76,6 +64,8 @@ namespace 比亚迪AGS_WPF
 
             var clientWrapper =Services.GetRequiredService<IMqttClientService>();
             clientWrapper.ConnectAsync();
+            
+            var scriptHub = Services.GetRequiredService<ScriptHubViewModel>();
             // Create and show the main view.
         }
 
@@ -86,7 +76,7 @@ namespace 比亚迪AGS_WPF
         {
             var services = new ServiceCollection();
 
-            var config = ConfigHelper.LoadConfig<RootConfig>(AppPath.AppSettingsPath);
+            var config = ConfigHelper.LoadConfig<RootConfig>("./Config/appsettings.json");
             
 
             services.AddLogging(logging =>
@@ -105,12 +95,13 @@ namespace 比亚迪AGS_WPF
             
             services.AddTransient<PlotViewModel>();
             services.AddTransient<XyPlotViewModel>();
+            services.AddTransient<ScriptsViewModel>();
+            services.AddSingleton<ScriptHubViewModel>();
                        
             services.AddTransient<IScriptExecutor>(serviceProvider => new PythonExecutor(config.PythonPath));
-            // services.AddSingleton(new MqttClientWrapper(config.MqttBrokerAddress, config.MqttBrokerPort));
             services.AddSingleton<IMqttClientWrapper>(serviceProvider => new MqttClientWrapper(config.MqttBrokerAddress, config.MqttBrokerPort));
             services.AddSingleton<IMqttClientService, MqttClientService>();
-            // services.AddSingleton(new PythonExecutor(config.PythonPath));
+            
             return services.BuildServiceProvider();
         }
     }

@@ -1,12 +1,28 @@
-import pyvisa
+﻿import pyvisa
 import logging
 import time
-
 import requests
 
 logging.basicConfig(level=logging.DEBUG, filemode='w', filename="./logs/hipot.log",
                     format='%(asctime)s - %(levelname)s - %(message)s', encoding='utf-8')
 tos9301_resouce = '''TCPIP0::192.168.1.13::inst0::INSTR'''
+
+TestItems = [
+    {
+        "Name": "DC+ - DC+'",
+        "Category": "DCW",
+        "Lower": 0,
+        "Upper": 1,
+        "Unit": "mA"
+    },
+    {
+        "Name": "DC+&DC- - GND",
+        "Category": "DCW",
+        "Lower": 0,
+        "Upper": 1,
+        "Unit": "mA"
+    }
+]
 
 
 def connect_device(resource):
@@ -40,11 +56,11 @@ def config(device):
     # 发送SYST:CONF:PHOL 2 命令，配置系统的保持时间。
     device.write('SYST:CONF:PHOL 2')
     # 发送SYST:COMM:RLST REM 命令，配置系统的远程通信模式。
-    # device.write('SYST:COMM:RLST REM')
+    device.write('SYST:COMM:RLST REM')
     # 发送FUNC DCW 命令，设置功能为直流耐压测试。
     device.write('FUNC DCW')
     # 发送DCW:VOLT 1000V 命令，设置直流耐压测试的电压为 1000V。
-    device.write('DCW:VOLT 1000V')
+    device.write('DCW:VOLT 50V')
     # 发送DCW:VOLT:PROT 5000V 命令，设置直流耐压测试的电压保护为 5000V。
     device.write('DCW:VOLT:PROT 5000V')
     # 发送DCW:VOLT:SWE:TIM 1 命令，设置直流耐压测试的电压上升时间为 1s。
@@ -99,7 +115,7 @@ def measure(device, func, TERM1, TERM2, TERM3, TERM4):
     device.write('INIT:TEST;*WAI;')
     # time.sleep(2)
     logging.debug(device.query('*OPC?'))
-    time.sleep(3)
+    time.sleep(4)
     # 发送RES? 命令，查询测试结果。
     result = device.query('RES?')
     # result=device.query("READ?")

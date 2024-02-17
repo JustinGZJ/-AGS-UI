@@ -16,7 +16,8 @@
             保存
         </Button>
         <!-- <pts:PropertyGrid SelectedObject="{Binding Config}"></pts:PropertyGrid> -->
-        <hc:PropertyGrid SelectedObject="{Binding Config}"></hc:PropertyGrid>
+        
+        <hc:PropertyGrid SelectedObject="{Binding Config}"  />
     </StackPanel>
 
 </UserControl>

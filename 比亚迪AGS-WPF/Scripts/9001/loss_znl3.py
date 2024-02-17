@@ -9,6 +9,15 @@ logging.basicConfig(level=logging.DEBUG, filemode='w', filename="./logs/znl.log"
                     format='%(asctime)s - %(levelname)s - %(message)s', encoding='utf-8')
 znl_resouce = '''TCPIP0::192.168.1.16::inst0::INSTR'''
 
+frequency = [10, 30, 60, 100, 200, 300, 350, 430, 550, 600, 800, 1000, 2000, 5000, 10000, 30000, 40000, 50000, 60000,
+             80000, 100000]
+
+l1_lower = [12, 21, 28, 32, 39, 39, 45, 45, 53, 52, 48, 45, 41, 36, 33, 32, 33, 42, 35, 27, 20]
+l1_upper = [18, 28, 36, 42, 63, 60, 67, 85, 85, 78, 78, 79, 71, 60, 50, 55, 64, 64, 55, 50, 46]
+
+l2_lower = [12, 21, 27, 32, 39, 44, 48, 49, 49, 48, 47, 45, 40, 37, 34, 30, 35, 40, 35, 26, 20]
+l2_upper = [18, 28, 36, 42, 55, 63, 85, 85, 85, 70, 80, 80, 65, 55, 52, 50, 65, 68, 70, 65, 50]
+
 
 def connect_device(resource):
     # 创建一个资源管理器
@@ -65,14 +74,11 @@ def config(device):
     device.write('SENS1:FREQ:STOP 500000 kHz;')
     # 清除设备的所有段
     device.write('SENS1:SEGM:CLE;')
-    # 定义设备的各个段的参数
-    device.write('SENS1:SEGM:DEF1 10kHz,79.433kHz,10,0dBm,AUTO,2,1000 Hz;')
-    device.write('SENS1:SEGM:DEF2 100kHz,425.670kHz,10,0dBm,AUTO,2,1000 Hz;')
-    device.write('SENS1:SEGM:DEF3 500kHz,933.033kHz,10,0dBm,AUTO,2,1000 Hz;')
-    device.write('SENS1:SEGM:DEF4 1000kHz,2687.875kHz,10,0dBm,AUTO,2,1000 Hz;')
-    device.write('SENS1:SEGM:DEF5 3000kHz,16543.950kHz,10,0dBm,AUTO,2,1000 Hz;')
-    device.write('SENS1:SEGM:DEF6 20000kHz,158865.600kHz,10,0dBm,AUTO,2,1000 Hz;')
-    device.write('SENS1:SEGM:DEF7 200000kHz,500000.000kHz,11,0dBm,AUTO,2,1000 Hz;')
+
+    # 为每个频率点定义一个频率段
+    for i, freq in enumerate(frequency):
+        device.write(f'SENS1:SEGM:DEF{i + 1} {freq}kHz,{freq}kHz,1,0dBm,AUTO,2,1000 Hz;')
+
     # 设置设备的频率模式为段
     device.write('SENS1:FREQ:MODE SEGM;')
 
@@ -97,7 +103,7 @@ def get_data(device):
     # 设置设备的频率起始值为10000Hz
     device.write('FREQuency:STARt 10000')
     # 设置设备的频率结束值为60000000Hz
-    device.write('FREQ:STOP 60000000')
+    device.write('FREQ:STOP 10000000')
     # 打开设备的连续初始化模式
     device.write('INIT:CONT:ALL ON')
     # 设置设备的扫描次数为1
@@ -110,16 +116,25 @@ def get_data(device):
     # 对于查询命令，我们需要读取返回的数据
     data_format = device.query_binary_values('FORMAT REAL,32;:CALC:DATA:DALL? FDAT')
     trace_data = device.query_binary_values('TRAC:STIM? CH1DATA')
-
     # 打印接收的数据
     logging.debug(data_format)
     logging.debug(trace_data)
     return data_format, trace_data
 
 
-def plot_data(data_format, trace_data):
+def plot_data(data_format, trace_data, channel=1):
     plt.plot(trace_data, data_format)
-    plt.show()
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Magnitude (dB)')
+    # 添加上下限制
+    if channel == 1:
+        plt.plot(l1_lower, frequency, 'r--')
+        plt.plot(l1_upper, frequency, 'r--')
+    else:
+        plt.plot(l2_lower, frequency, 'r--')
+        plt.plot(l2_upper, frequency, 'r--')
+    # 保存图片，按照当前时间命名
+    plt.savefig(f'./images/{time.time()}.png')
 
 
 def switch_channel(channel=1, resource='PXI1Slot2'):
@@ -142,29 +157,52 @@ def write_plc(address, value):
         return False
 
 
+def create_data_point(i, j, freq, data_format):
+    lower = l1_lower if i == 1 else l2_lower
+    upper = l1_upper if i == 1 else l2_upper
+    category = "Loss-1" if i == 1 else "Loss-2"
+    return {
+        "Name": freq,
+        "Category": category,
+        "Lower": lower[j],
+        "Upper": upper[j],
+        "Value": data_format[j],
+        "Result": "PASS" if lower[j] < data_format[j] < upper[j] else "FAIL",
+        "Unit": "dB"
+    }
+
+
 def measure():
-    device = connect_device()
-    config(device)
-    # 测试两个通道的数据,并同时返回数据
-    # 定义一个数组，用于存储两个通道的数据
-    data = []
-    for i in range(1, 3):
-        switch_channel(i)
-        # 延时0.5秒
-        time.sleep(0.5)
-        data_format, trace_data = get_data(device)
-        data.append((data_format, trace_data))
-        plot_data(data_format, trace_data)
-    close_device(device)
-    return data
+    try:
+        device = connect_device(znl_resouce)
+        config(device)
+        data = []
+        for i in range(1, 3):
+            switch_channel(i)
+            time.sleep(0.5)  # consider replacing this with a more dynamic wait
+            data_format, trace_data = get_data(device)
+            data.append((data_format, trace_data))
+            plot_data(data_format, trace_data, i)
+            for j, freq in enumerate(frequency):
+                data_point = create_data_point(i, j, freq, data_format)
+                data.append(data_point)
+        close_device(device)
+        return data
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        return []
 
 
 def main():
-    write_plc("5120", 0)
-    write_plc("6121", 0)
-    # measure()
-    time.sleep(1)
-    write_plc("6121", 1)
+    write_plc("D5120", 0)
+    write_plc("D6121", 0)
+    result = measure()
+    if "FAIL" in [item["Result"] for item in result]:
+        write_plc("D6121", 2)
+    else:
+        write_plc("D6121", 1)
+    write_plc("D6121", 1)
+    return result
 
 
 if __name__ == "__main__":

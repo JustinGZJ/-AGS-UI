@@ -73,9 +73,7 @@
                     <Border Grid.Column="1" Style="{StaticResource GridBorder}" />
                 </Grid>
                 <Grid x:Name="lbsheet2" Grid.Row="1">
-                    <ContentControl x:Name="Text" Content="{Binding ContentView}">
-                    
-                    </ContentControl>
+                    <ContentControl x:Name="Text" Content="{Binding ContentView}" />
                 </Grid>
                 <Grid x:Name="lbbuttons" Grid.Row="2">
                     <UniformGrid Columns="8">
@@ -93,9 +91,9 @@
                         </Button>
                         <Button
                             Command="{Binding OpenCommand}"
-                            CommandParameter="监视页面"
+                            CommandParameter="脚本编辑"
                             Style="{StaticResource LbbStyle}">
-                            监视页面
+                            脚本编辑
                         </Button>
                         <Button
                             Command="{Binding OpenCommand}"
@@ -294,10 +292,11 @@
                         BorderThickness="1">
                         <!-- 这里的Text属性绑定的是RunningStatus  运行 显示绿色，停止 显示红色，暂停 显示灰色，报警 显示黄色  -->
                         <TextBlock
-                            HorizontalAlignment="Center"
+                            HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            FontSize="24"
-                            Foreground="{Binding RunningStatus, Converter={StaticResource RunningStatusColorConverter}}"
+                            FontSize="16"
+                            
+                            Foreground="BlueViolet"
                             Text="{Binding RunningStatus}"
                             TextWrapping="WrapWithOverflow" />
                     </Border>
@@ -504,7 +503,7 @@
             <Border Style="{StaticResource GridBorder}">
                 <TextBlock TextAlignment="Center">
                     <Run>供方信息:</Run>
-                    <Run Text="{Binding Company}"></Run>
+                    <Run Text="{Binding Company}" />
                     <Run />
                     <Run>联系电话:</Run>
                     <Run Text="{Binding PhoneNumber}" />

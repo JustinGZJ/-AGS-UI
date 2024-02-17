@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace 比亚迪AGS_WPF.ViewModels
 {
@@ -12,7 +7,7 @@ namespace 比亚迪AGS_WPF.ViewModels
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        public string Path { get; set; }
+        public string? Path { get; set; }
         public DateTime DateModified { get; set; }
         public bool IsFolder { get; set; }
         public ObservableCollection<FileSystemItem> SubItems { get; set; }

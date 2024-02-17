@@ -3,40 +3,52 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:比亚迪AGS_WPF.Views"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
              xmlns:bv="clr-namespace:比亚迪AGS_WPF.Behaviors"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.DataContext>
-        <viewModels:ScriptsViewModel />
-    </UserControl.DataContext>
     <Grid Background="#F5F5F5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TreeView
             x:Name="MyTreeView"
             ItemsSource="{Binding FolderList}">
             <TreeView.ItemTemplate>
-                <!-- <i:Interaction.Behaviors> -->
-                <!--     <bv:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" /> -->
-                <!-- </i:Interaction.Behaviors> -->
                 <HierarchicalDataTemplate ItemsSource="{Binding SubItems}">
                     <TextBlock Text="{Binding Name}" />
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
+            <b:Interaction.Behaviors>
+                <bv:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem,Mode=TwoWay}" />
+            </b:Interaction.Behaviors>
         </TreeView>
-        <!-- ... -->
-        <avalonedit:TextEditor Grid.Column="1"
-                               Name="CodeTextEditor"
-                               FontFamily="Consolas"
-                               FontSize="10pt"
-                               ShowLineNumbers="True"
-                              />
-        <!-- ... -->
+        
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding FunctionName,Mode=TwoWay}" Width="100" />
+                <!-- 运行脚本 -->
+                <Button Content="运行" Width="100" Height="30" Command="{Binding RunScriptCommand}" />
+                <!-- 保存脚本 -->
+                <Button Margin="10 0" Content="保存" Width="100" Height="30" Command="{Binding SaveScriptCommand}" />
+            </StackPanel>
+            <avalonedit:TextEditor Grid.Row="1" 
+                Name="CodeTextEditor"
+                FontFamily="Consolas"
+                FontSize="10pt"
+                bv:TextEditorExtensions.CodeText="{Binding CodeText,Mode=TwoWay}"
+                ShowLineNumbers="True"
+            />
+           <TextBox Margin="0 5 0 0" Grid.Row="2" Text="{Binding CodeOutput}" />
+        </Grid>
+        
     </Grid>
 </UserControl>

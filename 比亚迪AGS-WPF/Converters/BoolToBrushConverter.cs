@@ -46,6 +46,8 @@ public class TestResultColorConverter : IValueConverter
             {
                 "OK" => Brushes.Lime,
                 "NG" => Brushes.Red,
+                "PASS" => Brushes.Lime,
+                "FAIL" => Brushes.Red,
                 _ => Brushes.Gray
             };
     }

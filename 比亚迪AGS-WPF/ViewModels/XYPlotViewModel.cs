@@ -1,5 +1,4 @@
-﻿using System;
-using OxyPlot;
+﻿using OxyPlot;
 using OxyPlot.Series;
 using System.Collections.Generic;
 using System.Drawing;
