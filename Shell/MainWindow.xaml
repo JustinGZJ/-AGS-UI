@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Loaded="Window_Loaded"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        WindowState="Maximized"
+        
+        Title="Shell" Height="450" Width="800">
     <Grid>
         <TabControl x:Name="tabControl" />
         <Label x:Name="Status" HorizontalAlignment="Center" VerticalAlignment="Center">载入中...</Label>

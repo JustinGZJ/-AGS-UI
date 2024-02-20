@@ -15,7 +15,7 @@ using Path = System.IO.Path;
 
 namespace Shell
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         [DllImport("user32.dll")]
         public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
@@ -40,7 +40,7 @@ namespace Shell
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public MainWindow()
         {
@@ -62,7 +62,7 @@ namespace Shell
             //  ScanDirectoryForExeFiles(this.tabControl,Path.Combine(workdir,"SCADA"));
             var exeFiles = LoadExeFilesAsync(Path.Combine(workdir, "SCADA"));
             ConcurrentBag<Process> processBag = new ConcurrentBag<Process>();
-           await Task.Run(() =>
+            await Task.Run(() =>
             {
                 Parallel.ForEach(exeFiles, (s, state) =>
                 {
@@ -71,8 +71,8 @@ namespace Shell
                 });
                 _processes = processBag.ToList();
             });
-  
-            foreach (var process in processBag )
+
+            foreach (var process in processBag)
             {
                 // Add the new TabItem to the TabControl
                 TabItem newTabItem = new TabItem
@@ -81,7 +81,6 @@ namespace Shell
                 };
                 tabControl.Items.Add(newTabItem);
                 EmbedApplicationInTabControl(process, newTabItem);
-
             }
 
             this.Status.Content = "";
@@ -94,8 +93,8 @@ namespace Shell
                 if (!process.HasExited)
                     process.CloseMainWindow();
             }
+
             base.OnClosing(e);
-            
         }
 
 
@@ -122,11 +121,11 @@ namespace Shell
             }
         }
 
-        
+
         private Process WaitForProcessStart(string appPath)
         {
             Process process = new Process();
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(appPath);
+            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(appPath) ?? string.Empty;
             process.StartInfo.FileName = appPath;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
             process.EnableRaisingEvents = true;
@@ -148,63 +147,61 @@ namespace Shell
 
             return process;
         }
-        
+
         private void EmbedApplicationInTabControl(Process process, TabItem tabItem)
         {
-            if (!process.HasExited)
-            {
-                // Set the external application as a child window
-                int style = GetWindowLong(process.MainWindowHandle, GWL_STYLE);
-                style |= WS_CHILD;
-                SetWindowLong(process.MainWindowHandle, GWL_STYLE, style);
+            if (process.HasExited) return;
+            // Set the external application as a child window
+            int style = GetWindowLong(process.MainWindowHandle, GWL_STYLE);
+            style |= WS_CHILD;
+            SetWindowLong(process.MainWindowHandle, GWL_STYLE, style);
 
-                // Create a CustomHwndHost instance with the external application's window handle
-                CustomHwndHost hwndHost = new CustomHwndHost(process.MainWindowHandle);
-                tabItem.Header = process.MainWindowTitle;
-                // Set the content of the TabItem to the CustomHwndHost instance
-                tabItem.Content = hwndHost;
-            }
+            // Create a CustomHwndHost instance with the external application's window handle
+            CustomHwndHost hwndHost = new CustomHwndHost(process.MainWindowHandle);
+            tabItem.Header = process.MainWindowTitle;
+            // Set the content of the TabItem to the CustomHwndHost instance
+            tabItem.Content = hwndHost;
         }
 
 
-        private Process EmbedApplication(string appPath, TabItem tabItem)
-        {
-            Process process = new Process();
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(appPath);
-            process.StartInfo.FileName = appPath;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-            process.EnableRaisingEvents = true;
-            //  process.Exited += Process_Exited;
-            process.Start();
-
-            // Wait for the application to start and load
-            while (process.MainWindowHandle == IntPtr.Zero)
-            {
-                Thread.Sleep(100);
-                process.Refresh(); // Update the process information
-
-                // Check if the process has exited
-                if (process.HasExited)
-                {
-                    return process;
-                }
-            }
-
-            if (!process.HasExited)
-            {
-                // Set the external application as a child window
-                int style = GetWindowLong(process.MainWindowHandle, GWL_STYLE);
-                style |= WS_CHILD;
-                SetWindowLong(process.MainWindowHandle, GWL_STYLE, style);
-
-                // Create a CustomHwndHost instance with the external application's window handle
-                CustomHwndHost hwndHost = new CustomHwndHost(process.MainWindowHandle);
-                tabItem.Header = process.MainWindowTitle;
-                // Set the content of the TabItem to the CustomHwndHost instance
-                tabItem.Content = hwndHost;
-            }
-
-            return process;
-        }
+        // private Process EmbedApplication(string appPath, TabItem tabItem)
+        // {
+        //     Process process = new Process();
+        //     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(appPath);
+        //     process.StartInfo.FileName = appPath;
+        //     process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+        //     process.EnableRaisingEvents = true;
+        //     //  process.Exited += Process_Exited;
+        //     process.Start();
+        //
+        //     // Wait for the application to start and load
+        //     while (process.MainWindowHandle == IntPtr.Zero)
+        //     {
+        //         Thread.Sleep(100);
+        //         process.Refresh(); // Update the process information
+        //
+        //         // Check if the process has exited
+        //         if (process.HasExited)
+        //         {
+        //             return process;
+        //         }
+        //     }
+        //
+        //     if (!process.HasExited)
+        //     {
+        //         // Set the external application as a child window
+        //         int style = GetWindowLong(process.MainWindowHandle, GWL_STYLE);
+        //         style |= WS_CHILD;
+        //         SetWindowLong(process.MainWindowHandle, GWL_STYLE, style);
+        //
+        //         // Create a CustomHwndHost instance with the external application's window handle
+        //         CustomHwndHost hwndHost = new CustomHwndHost(process.MainWindowHandle);
+        //         tabItem.Header = process.MainWindowTitle;
+        //         // Set the content of the TabItem to the CustomHwndHost instance
+        //         tabItem.Content = hwndHost;
+        //     }
+        //
+        //     return process;
+        // }
     }
 }
