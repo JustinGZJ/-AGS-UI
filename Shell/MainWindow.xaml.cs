@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using AvalonDock.Layout;
 using Path = System.IO.Path;
 
 namespace Shell
@@ -74,12 +75,11 @@ namespace Shell
 
             foreach (var process in processBag)
             {
-                // Add the new TabItem to the TabControl
-                TabItem newTabItem = new TabItem
+                var newTabItem = new LayoutDocument
                 {
-                    Header = "loading..."
+                    Title = "loading..."
                 };
-                tabControl.Items.Add(newTabItem);
+                this.documentPane.Children.Add(newTabItem);
                 EmbedApplicationInTabControl(process, newTabItem);
             }
 
@@ -148,7 +148,7 @@ namespace Shell
             return process;
         }
 
-        private void EmbedApplicationInTabControl(Process process, TabItem tabItem)
+        private void EmbedApplicationInTabControl(Process process, LayoutDocument tabItem)
         {
             if (process.HasExited) return;
             // Set the external application as a child window
@@ -158,7 +158,7 @@ namespace Shell
 
             // Create a CustomHwndHost instance with the external application's window handle
             CustomHwndHost hwndHost = new CustomHwndHost(process.MainWindowHandle);
-            tabItem.Header = process.MainWindowTitle;
+            tabItem.Title = process.MainWindowTitle;
             // Set the content of the TabItem to the CustomHwndHost instance
             tabItem.Content = hwndHost;
         }

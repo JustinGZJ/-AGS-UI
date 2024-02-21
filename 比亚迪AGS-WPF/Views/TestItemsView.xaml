@@ -32,16 +32,34 @@
                 <DataGridTemplateColumn />
                 <DataGridTextColumn
                     Width="*"
-                    Binding="{Binding Value}"
+                    Binding="{Binding Value ,StringFormat=F3}"
                     Header="值" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding Unit}"
                     Header="单位" />
-                <DataGridTextColumn
-                    Width="*"
-                    Binding="{Binding Result}"
-                    Header="结果" />
+                <DataGridTemplateColumn Width="*"
+                                        Header="结果"  >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Result}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Result}" Value="PASS">
+                                                <Setter Property="Foreground" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Result}" Value="FAIL">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
             </DataGrid.Columns>
         </DataGrid>

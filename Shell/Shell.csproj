@@ -9,4 +9,8 @@
         <ApplicationIcon>title.ico</ApplicationIcon>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Dirkster.AvalonDock" Version="4.72.1" />
+    </ItemGroup>
+
 </Project>

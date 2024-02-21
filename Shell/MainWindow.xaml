@@ -9,7 +9,21 @@
         
         Title="Shell" Height="450" Width="800">
     <Grid>
-        <TabControl x:Name="tabControl" />
+    
+        <DockingManager x:Name="dockingManager">
+            <LayoutRoot>
+                <LayoutPanel Orientation="Horizontal">
+                    <LayoutDocumentPaneGroup>
+                        <LayoutDocumentPane x:Name="documentPane">
+                            <!-- 在这里动态添加 LayoutDocument -->
+                            <!-- <LayoutDocument Title="My UserControl"> -->
+                            <!--     <TabControl x:Name="tabControl"  Visibility="Hidden"/> -->
+                            <!-- </LayoutDocument> -->
+                        </LayoutDocumentPane>
+                    </LayoutDocumentPaneGroup>
+                </LayoutPanel>
+            </LayoutRoot>
+        </DockingManager>
         <Label x:Name="Status" HorizontalAlignment="Center" VerticalAlignment="Center">载入中...</Label>
     </Grid>
 </Window>
