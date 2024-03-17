@@ -43,7 +43,7 @@ public class ScriptHubViewModel : ObservableRecipient
                 Messenger.Send(new TestLog()
                 {
                     Level = "Info",
-                    Log = $"Script executed successfully: {e.Path} {e.Function}"
+                   Log = $"Script executed : {e.Path} {e.Function} {string.Join(",", e.Params ?? Array.Empty<string>())}  returned {r}"
                 });
             }
             catch (Exception ex)

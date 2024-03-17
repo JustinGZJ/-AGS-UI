@@ -97,6 +97,7 @@ namespace 比亚迪AGS_WPF
             services.AddTransient<XyPlotViewModel>();
             services.AddTransient<ScriptsViewModel>();
             services.AddSingleton<ScriptHubViewModel>();
+            services.AddTransient<UserOperationViewModel>();
                        
             services.AddTransient<IScriptExecutor>(serviceProvider => new PythonExecutor(config.PythonPath));
             services.AddSingleton<IMqttClientWrapper>(serviceProvider => new MqttClientWrapper(config.MqttBrokerAddress, config.MqttBrokerPort));

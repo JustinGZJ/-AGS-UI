@@ -11,6 +11,9 @@ def print_hello():
 def return_hello():
     return "hello"
 
+def calibration(mode):
+    return mode
+
 
 def return_hello_list():
     return ["hello", "world"]

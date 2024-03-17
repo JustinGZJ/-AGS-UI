@@ -17,10 +17,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid x:Name="content">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <!-- <Grid.ColumnDefinitions> -->
+            <!--     <ColumnDefinition Width="3*" /> -->
+            <!--     <ColumnDefinition Width="*" /> -->
+            <!-- </Grid.ColumnDefinitions> -->
 
             <Grid x:Name="leftbody" Background="White">
                 <Grid.RowDefinitions>
@@ -127,373 +127,373 @@
                 <Border Grid.Row="2" Style="{StaticResource GridBorder}" />
                 <Border Grid.Row="3" Style="{StaticResource GridBorder}" />
             </Grid>
-            <Grid
-                x:Name="rightbody"
-                Grid.Column="1"
-                Background="#C5D9F1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="153*" />
-                    <RowDefinition Height="131*" />
-                    <RowDefinition Height="70*" />
-                    <RowDefinition Height="70*" />
-                    <RowDefinition Height="117*" />
-
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25*" />
-                        <RowDefinition Height="100*" />
-                        <RowDefinition Height="20*" />
-                    </Grid.RowDefinitions>
-                    <Border
-                        Grid.Row="0"
-                        Background="#00B0F0"
-                        Style="{StaticResource GridBorder}">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Text="{Binding CurrentTIme}" />
-                    </Border>
-                    <Grid Grid.Row="1" Background="White">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="3*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock>用户名</TextBlock>
-                        </Border>
-                        <UniformGrid
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Columns="3">
-                            <Border
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock x:Name="Name" Text="{Binding UserName}" />
-                            </Border>
-                            <Border BorderBrush="Black" BorderThickness="0,0,1,1">
-                                <TextBlock>模式</TextBlock>
-                            </Border>
-                            <Border BorderBrush="Black" BorderThickness="0,0,1,1">
-                                <TextBlock x:Name="Mode" Text="{Binding Mode}" />
-                            </Border>
-                        </UniformGrid>
-                        <Border
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock>产品编码</TextBlock>
-                        </Border>
-                        <Border
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock x:Name="产品编码" Text="{Binding ProductId}" />
-                        </Border>
-                        <Border
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock>产品名称</TextBlock>
-                        </Border>
-                        <Border
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock x:Name="产品名称" Text="{Binding ProductName}" />
-                        </Border>
-
-                        <Border
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock>产品代码</TextBlock>
-                        </Border>
-                        <Border
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock x:Name="产品代码" Text="{Binding ProductCode}" />
-                        </Border>
-                        <Border
-                            Grid.Row="4"
-                            Grid.Column="0"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock>工装绑定</TextBlock>
-                        </Border>
-                        <Border
-                            Grid.Row="4"
-                            Grid.Column="1"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock x:Name="工装绑定" Text="{Binding FixtureBinding}" />
-                        </Border>
-                        <Border
-                            Grid.Row="5"
-                            Grid.Column="0"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock />
-                        </Border>
-                        <Border
-                            Grid.Row="5"
-                            Grid.Column="1"
-                            BorderBrush="Black"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock />
-                        </Border>
-
-                    </Grid>
-                    <Border Grid.Row="2" Style="{StaticResource GridBorder}">
-                        <TextBlock HorizontalAlignment="Center" Text="{Binding ProductBarcode}" />
-                    </Border>
-
-                </Grid>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="3*" />
-                    </Grid.ColumnDefinitions>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            TextWrapping="WrapWithOverflow">
-                            运行状态
-                        </TextBlock>
-                    </Border>
-                    <Border
-                        Grid.Column="1"
-                        BorderBrush="Black"
-                        BorderThickness="1">
-                        <!-- 这里的Text属性绑定的是RunningStatus  运行 显示绿色，停止 显示红色，暂停 显示灰色，报警 显示黄色  -->
-                        <TextBlock
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            
-                            Foreground="BlueViolet"
-                            Text="{Binding RunningStatus}"
-                            TextWrapping="WrapWithOverflow" />
-                    </Border>
-                </Grid>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="3*" />
-                    </Grid.ColumnDefinitions>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            TextWrapping="WrapWithOverflow">
-                            操作提示
-                        </TextBlock>
-                    </Border>
-                    <Border
-                        Grid.Column="1"
-                        BorderBrush="Black"
-                        BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Text="{Binding OperationPrompt}"
-                            TextWrapping="WrapWithOverflow" />
-                    </Border>
-                </Grid>
-
-                <Grid Grid.Row="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="3*" />
-                    </Grid.ColumnDefinitions>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            TextWrapping="WrapWithOverflow">
-                            产品状态
-                        </TextBlock>
-                    </Border>
-                    <Border
-                        Grid.Column="1"
-                        BorderBrush="Black"
-                        BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            Foreground="{Binding ProductStatus, Converter={StaticResource TestResultColorConverter}}"
-                            Text="{Binding ProductStatus}"
-                            TextWrapping="WrapWithOverflow" />
-                    </Border>
-                </Grid>
-
-                <Grid Grid.Row="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="3*" />
-                    </Grid.ColumnDefinitions>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            TextWrapping="WrapWithOverflow">
-                            生产信息
-                        </TextBlock>
-                    </Border>
-                    <Border
-                        Grid.Column="1"
-                        BorderBrush="Black"
-                        BorderThickness="1">
-                        <Grid Grid.Row="1" Background="White">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="15*" />
-                                <ColumnDefinition Width="20*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <!-- <Border -->
-                            <!--     Grid.Row="0" -->
-                            <!--     Grid.Column="0" -->
-                            <!--     BorderBrush="Black" -->
-                            <!--     BorderThickness="0,0,1,1"> -->
-                            <!--     <TextBlock>总次数</TextBlock> -->
-                            <!-- </Border> -->
-                            <!-- <Border -->
-                            <!--     Grid.Row="0" -->
-                            <!--     Grid.Column="1" -->
-                            <!--     BorderBrush="Black" -->
-                            <!--     BorderThickness="0,0,1,1"> -->
-                            <!--     <TextBlock Text="{Binding TotalCount}" /> -->
-                            <!-- </Border> -->
-                            <Border
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>周期时间</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding CycleTime}" />
-                            </Border>
-                            <Border
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>工单数量</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding WorkOderQty}" />
-                            </Border>
-
-                            <Border
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>完成数</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding CompleteQty}" />
-                            </Border>
-                            <Border
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>合格数</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding OkQty}" />
-                            </Border>
-                            <Border
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>合格率</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding YieldRate}" />
-                            </Border>
-                            <Border
-                                Grid.Row="5"
-                                Grid.Column="0"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock>上一次周期</TextBlock>
-                            </Border>
-                            <Border
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                BorderBrush="Black"
-                                BorderThickness="0,0,1,1">
-                                <TextBlock Text="{Binding LastCycleTime}" />
-                            </Border>
-
-                        </Grid>
-                    </Border>
-                </Grid>
-            </Grid>
-            <Border Grid.Column="0" Style="{StaticResource GridBorder}" />
-            <Border Grid.Column="1" Style="{StaticResource GridBorder}" />
+            <!-- <Grid -->
+            <!--     x:Name="rightbody" -->
+            <!--     Grid.Column="1" -->
+            <!--     Background="#C5D9F1"> -->
+            <!--     <Grid.RowDefinitions> -->
+            <!--         <RowDefinition Height="153*" /> -->
+            <!--         <RowDefinition Height="131*" /> -->
+            <!--         <RowDefinition Height="70*" /> -->
+            <!--         <RowDefinition Height="70*" /> -->
+            <!--         <RowDefinition Height="117*" /> -->
+            <!-- -->
+            <!--     </Grid.RowDefinitions> -->
+            <!--     <Grid Grid.Row="0"> -->
+            <!--         <Grid.RowDefinitions> -->
+            <!--             <RowDefinition Height="25*" /> -->
+            <!--             <RowDefinition Height="100*" /> -->
+            <!--             <RowDefinition Height="20*" /> -->
+            <!--         </Grid.RowDefinitions> -->
+            <!--         <Border -->
+            <!--             Grid.Row="0" -->
+            <!--             Background="#00B0F0" -->
+            <!--             Style="{StaticResource GridBorder}"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="16" -->
+            <!--                 FontWeight="Bold" -->
+            <!--                 Text="{Binding CurrentTIme}" /> -->
+            <!--         </Border> -->
+            <!--         <Grid Grid.Row="1" Background="White"> -->
+            <!--             <Grid.ColumnDefinitions> -->
+            <!--                 <ColumnDefinition Width="*" /> -->
+            <!--                 <ColumnDefinition Width="3*" /> -->
+            <!--             </Grid.ColumnDefinitions> -->
+            <!--             <Grid.RowDefinitions> -->
+            <!--                 <RowDefinition /> -->
+            <!--                 <RowDefinition /> -->
+            <!--                 <RowDefinition /> -->
+            <!--                 <RowDefinition /> -->
+            <!--                 <RowDefinition /> -->
+            <!--                 <RowDefinition /> -->
+            <!--             </Grid.RowDefinitions> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="0" -->
+            <!--                 Grid.Column="0" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock>用户名</TextBlock> -->
+            <!--             </Border> -->
+            <!--             <UniformGrid -->
+            <!--                 Grid.Row="0" -->
+            <!--                 Grid.Column="1" -->
+            <!--                 Columns="3"> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="0" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock x:Name="Name" Text="{Binding UserName}" /> -->
+            <!--                 </Border> -->
+            <!--                 <Border BorderBrush="Black" BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>模式</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border BorderBrush="Black" BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock x:Name="Mode" Text="{Binding Mode}" /> -->
+            <!--                 </Border> -->
+            <!--             </UniformGrid> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="1" -->
+            <!--                 Grid.Column="0" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock>产品编码</TextBlock> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="1" -->
+            <!--                 Grid.Column="1" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock x:Name="产品编码" Text="{Binding ProductId}" /> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="2" -->
+            <!--                 Grid.Column="0" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock>产品名称</TextBlock> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="2" -->
+            <!--                 Grid.Column="1" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock x:Name="产品名称" Text="{Binding ProductName}" /> -->
+            <!--             </Border> -->
+            <!-- -->
+            <!--             <Border -->
+            <!--                 Grid.Row="3" -->
+            <!--                 Grid.Column="0" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock>产品代码</TextBlock> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="3" -->
+            <!--                 Grid.Column="1" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock x:Name="产品代码" Text="{Binding ProductCode}" /> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="4" -->
+            <!--                 Grid.Column="0" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock>工装绑定</TextBlock> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="4" -->
+            <!--                 Grid.Column="1" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock x:Name="工装绑定" Text="{Binding FixtureBinding}" /> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="5" -->
+            <!--                 Grid.Column="0" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock /> -->
+            <!--             </Border> -->
+            <!--             <Border -->
+            <!--                 Grid.Row="5" -->
+            <!--                 Grid.Column="1" -->
+            <!--                 BorderBrush="Black" -->
+            <!--                 BorderThickness="0,0,1,1"> -->
+            <!--                 <TextBlock /> -->
+            <!--             </Border> -->
+            <!-- -->
+            <!--         </Grid> -->
+            <!--         <Border Grid.Row="2" Style="{StaticResource GridBorder}"> -->
+            <!--             <TextBlock HorizontalAlignment="Center" Text="{Binding ProductBarcode}" /> -->
+            <!--         </Border> -->
+            <!-- -->
+            <!--     </Grid> -->
+            <!--     <Grid Grid.Row="1"> -->
+            <!--         <Grid.ColumnDefinitions> -->
+            <!--             <ColumnDefinition Width="1*" /> -->
+            <!--             <ColumnDefinition Width="3*" /> -->
+            <!--         </Grid.ColumnDefinitions> -->
+            <!--         <Border BorderBrush="Black" BorderThickness="1"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="24" -->
+            <!--                 TextWrapping="WrapWithOverflow"> -->
+            <!--                 运行状态 -->
+            <!--             </TextBlock> -->
+            <!--         </Border> -->
+            <!--         <Border -->
+            <!--             Grid.Column="1" -->
+            <!--             BorderBrush="Black" -->
+            <!--             BorderThickness="1"> -->
+            <!--             ~1~ 这里的Text属性绑定的是RunningStatus  运行 显示绿色，停止 显示红色，暂停 显示灰色，报警 显示黄色  @1@ -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Left" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="16" -->
+            <!--                  -->
+            <!--                 Foreground="BlueViolet" -->
+            <!--                 Text="{Binding RunningStatus}" -->
+            <!--                 TextWrapping="WrapWithOverflow" /> -->
+            <!--         </Border> -->
+            <!--     </Grid> -->
+            <!--     <Grid Grid.Row="2"> -->
+            <!--         <Grid.ColumnDefinitions> -->
+            <!--             <ColumnDefinition Width="1*" /> -->
+            <!--             <ColumnDefinition Width="3*" /> -->
+            <!--         </Grid.ColumnDefinitions> -->
+            <!--         <Border BorderBrush="Black" BorderThickness="1"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="24" -->
+            <!--                 TextWrapping="WrapWithOverflow"> -->
+            <!--                 操作提示 -->
+            <!--             </TextBlock> -->
+            <!--         </Border> -->
+            <!--         <Border -->
+            <!--             Grid.Column="1" -->
+            <!--             BorderBrush="Black" -->
+            <!--             BorderThickness="1"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="16" -->
+            <!--                 Text="{Binding OperationPrompt}" -->
+            <!--                 TextWrapping="WrapWithOverflow" /> -->
+            <!--         </Border> -->
+            <!--     </Grid> -->
+            <!-- -->
+            <!--     <Grid Grid.Row="3"> -->
+            <!--         <Grid.ColumnDefinitions> -->
+            <!--             <ColumnDefinition Width="1*" /> -->
+            <!--             <ColumnDefinition Width="3*" /> -->
+            <!--         </Grid.ColumnDefinitions> -->
+            <!--         <Border BorderBrush="Black" BorderThickness="1"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="24" -->
+            <!--                 TextWrapping="WrapWithOverflow"> -->
+            <!--                 产品状态 -->
+            <!--             </TextBlock> -->
+            <!--         </Border> -->
+            <!--         <Border -->
+            <!--             Grid.Column="1" -->
+            <!--             BorderBrush="Black" -->
+            <!--             BorderThickness="1"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="24" -->
+            <!--                 Foreground="{Binding ProductStatus, Converter={StaticResource TestResultColorConverter}}" -->
+            <!--                 Text="{Binding ProductStatus}" -->
+            <!--                 TextWrapping="WrapWithOverflow" /> -->
+            <!--         </Border> -->
+            <!--     </Grid> -->
+            <!-- -->
+            <!--     <Grid Grid.Row="4"> -->
+            <!--         <Grid.ColumnDefinitions> -->
+            <!--             <ColumnDefinition Width="1*" /> -->
+            <!--             <ColumnDefinition Width="3*" /> -->
+            <!--         </Grid.ColumnDefinitions> -->
+            <!--         <Border BorderBrush="Black" BorderThickness="1"> -->
+            <!--             <TextBlock -->
+            <!--                 HorizontalAlignment="Center" -->
+            <!--                 VerticalAlignment="Center" -->
+            <!--                 FontSize="24" -->
+            <!--                 TextWrapping="WrapWithOverflow"> -->
+            <!--                 生产信息 -->
+            <!--             </TextBlock> -->
+            <!--         </Border> -->
+            <!--         <Border -->
+            <!--             Grid.Column="1" -->
+            <!--             BorderBrush="Black" -->
+            <!--             BorderThickness="1"> -->
+            <!--             <Grid Grid.Row="1" Background="White"> -->
+            <!--                 <Grid.ColumnDefinitions> -->
+            <!--                     <ColumnDefinition Width="15*" /> -->
+            <!--                     <ColumnDefinition Width="20*" /> -->
+            <!--                 </Grid.ColumnDefinitions> -->
+            <!--                 <Grid.RowDefinitions> -->
+            <!--                     <RowDefinition /> -->
+            <!--                     <RowDefinition /> -->
+            <!--                     <RowDefinition /> -->
+            <!--                     <RowDefinition /> -->
+            <!--                     <RowDefinition /> -->
+            <!--                     <RowDefinition /> -->
+            <!--                     <RowDefinition /> -->
+            <!--                 </Grid.RowDefinitions> -->
+            <!--                 ~1~ <Border @1@ -->
+            <!--                 ~1~     Grid.Row="0" @1@ -->
+            <!--                 ~1~     Grid.Column="0" @1@ -->
+            <!--                 ~1~     BorderBrush="Black" @1@ -->
+            <!--                 ~1~     BorderThickness="0,0,1,1"> @1@ -->
+            <!--                 ~1~     <TextBlock>总次数</TextBlock> @1@ -->
+            <!--                 ~1~ </Border> @1@ -->
+            <!--                 ~1~ <Border @1@ -->
+            <!--                 ~1~     Grid.Row="0" @1@ -->
+            <!--                 ~1~     Grid.Column="1" @1@ -->
+            <!--                 ~1~     BorderBrush="Black" @1@ -->
+            <!--                 ~1~     BorderThickness="0,0,1,1"> @1@ -->
+            <!--                 ~1~     <TextBlock Text="{Binding TotalCount}" /> @1@ -->
+            <!--                 ~1~ </Border> @1@ -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="0" -->
+            <!--                     Grid.Column="0" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>周期时间</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="0" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock Text="{Binding CycleTime}" /> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="1" -->
+            <!--                     Grid.Column="0" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>工单数量</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="1" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock Text="{Binding WorkOderQty}" /> -->
+            <!--                 </Border> -->
+            <!-- -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="2" -->
+            <!--                     Grid.Column="0" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>完成数</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="2" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock Text="{Binding CompleteQty}" /> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="3" -->
+            <!--                     Grid.Column="0" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>合格数</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="3" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock Text="{Binding OkQty}" /> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="4" -->
+            <!--                     Grid.Column="0" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>合格率</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="4" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock Text="{Binding YieldRate}" /> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="5" -->
+            <!--                     Grid.Column="0" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock>上一次周期</TextBlock> -->
+            <!--                 </Border> -->
+            <!--                 <Border -->
+            <!--                     Grid.Row="5" -->
+            <!--                     Grid.Column="1" -->
+            <!--                     BorderBrush="Black" -->
+            <!--                     BorderThickness="0,0,1,1"> -->
+            <!--                     <TextBlock Text="{Binding LastCycleTime}" /> -->
+            <!--                 </Border> -->
+            <!-- -->
+            <!--             </Grid> -->
+            <!--         </Border> -->
+            <!--     </Grid> -->
+            <!-- </Grid> -->
+            <!-- <Border Grid.Column="0" Style="{StaticResource GridBorder}" /> -->
+            <!-- <Border Grid.Column="1" Style="{StaticResource GridBorder}" /> -->
         </Grid>
 
         <Grid

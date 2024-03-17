@@ -33,7 +33,7 @@ public partial class MainViewModel : ObservableRecipient,IRecipient<RootConfig>,
         _views["ConfigView"] = new ConfigView();
         _views["DataView"] = new DataView();
         _views["UserView"] = new UserView();
-        _views["PlotView"] = new PlotView();
+        _views["PlotView"] =new UserOperationView();
 
         ContentView = _views["TestLogView"];
         IsActive=true;
@@ -149,7 +149,7 @@ public partial class MainViewModel : ObservableRecipient,IRecipient<RootConfig>,
                 }
                 break;
             case "停止":
-                ContentView = _views["TestLogView"];
+                ContentView = new StationCollectionView();
                 break;
             case "脚本编辑":
                 ContentView = _views["ScriptsView"];

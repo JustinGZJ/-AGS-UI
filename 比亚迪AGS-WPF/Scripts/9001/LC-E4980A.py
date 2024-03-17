@@ -69,7 +69,8 @@ def close_device(device):
 
 
 # 校准
-def calibration(device, mode):
+def calibration(mode):
+    device = connect_device(e4890_resouce)
     # mode 选择开路校准和短路校准
     if mode == 'OPEN':
         device.query(':CORR:OPEN')
@@ -77,6 +78,8 @@ def calibration(device, mode):
         device.query(':CORR:SHOR')
     else:
         logging.debug("校准模式错误")
+    close_device(device)
+    return True
 
 
 def write_plc(address, value):

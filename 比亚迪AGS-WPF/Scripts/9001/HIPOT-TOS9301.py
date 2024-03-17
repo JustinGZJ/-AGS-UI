@@ -1,4 +1,4 @@
-﻿import pyvisa
+﻿from pyvisa import ResourceManager, constants
 import logging
 import time
 import requests
@@ -27,7 +27,7 @@ TestItems = [
 
 def connect_device(resource):
     # 创建一个资源管理器
-    rm = pyvisa.ResourceManager()
+    rm = ResourceManager()
     # 连接到指定的设备
     device = rm.open_resource(resource)
     # 判断连接是否成功
@@ -109,18 +109,29 @@ def measure(device, func, TERM1, TERM2, TERM3, TERM4):
     device.write(f'ROUT:{func}:TERM 104,{TERM4}')
     # 发送ROUT:DCW:TERM? 104 命令，查询直流耐压测试终端 104 的配置。
     device.query(f'ROUT:{func}:TERM? 104')
-    # 发送STOP 命令，停止当前操作。
-    # device.write('STOP')
-    # 发送INIT:TEST 命令，初始化测试操作。
-    device.write('INIT:TEST;*WAI;')
-    # time.sleep(2)
-    logging.debug(device.query('*OPC?'))
-    time.sleep(4)
-    # 发送RES? 命令，查询测试结果。
-    result = device.query('RES?')
+    result = query_result(device)
     # result=device.query("READ?")
     logging.debug(result)
     return result
+
+def query_result(instr):
+    event_type =constants.EventType.service_request
+    # Mechanism by which we want to be notified
+    event_mech = constants.EventMechanism.queue
+    instr.enable_event(event_type, event_mech)
+    instr.write("*SRE 1")
+    instr.write('INIT:TEST;')
+    response = instr.wait_on_event(event_type, 4000)
+    if response == event_type and response.timed_out == False:
+        logging.debug("Event received")
+        result = instr.query('RES?')
+        logging.debug(result)
+        instr.disable_event(event_type, event_mech)
+        return result
+    else:
+        logging.debug("Event not received")
+        instr.disable_event(event_type, event_mech)
+        return None
 
 
 def main():

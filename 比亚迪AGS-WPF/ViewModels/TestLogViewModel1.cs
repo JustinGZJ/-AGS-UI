@@ -23,10 +23,10 @@ public partial class TestLogViewModel : ObservableRecipient, IRecipient<TestLog>
     /// </summary>
     public ObservableCollection<TestLog> TestLogs { get; set; } = new();
     
-    
-    public TestItemsViewModel TestItemsViewModel { get; set; } = new();
-    
-    public PlotViewModel PlotViewModel { get; set; } = new();
+    //
+    // public TestItemsViewModel TestItemsViewModel { get; set; } = new();
+    //
+    // public PlotViewModel PlotViewModel { get; set; } = new();
 
     public void Receive(TestLog message)
     {

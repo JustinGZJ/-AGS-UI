@@ -6,37 +6,25 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfExtensions="clr-namespace:比亚迪AGS_WPF.WpfExtensions"
     xmlns:viewModels="clr-namespace:比亚迪AGS_WPF.ViewModels"
-    xmlns:views="clr-namespace:比亚迪AGS_WPF.Views"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    FontSize="12"
     d:DataContext="{d:DesignInstance viewModels:TestLogViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
     <Grid x:Name="Lbsheet1">
-        <TabControl>
-            <TabItem Header="测试数据">
-                <ContentControl Content="{Binding TestItemsViewModel}"></ContentControl>
-            </TabItem>
-            <TabItem Header="图表">
-                <ContentControl Content="{Binding PlotViewModel}"></ContentControl>
-            </TabItem>
-            <TabItem Header="日志">
-                <DataGrid AutoGenerateColumns="False" wpfExtensions:DataGridExtensions.AutoScroll="True"
-                          ItemsSource="{Binding TestLogs}" PresentationTraceSources.TraceLevel="High">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Width="*"
-                            Binding="{Binding Time}"
-                            Header="时间" />
-                        <DataGridTextColumn
-                            Width="3*"
-                            Binding="{Binding Log}"
-                            Header="消息" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>
-
-        </TabControl>
-
+        <DataGrid AutoGenerateColumns="False" wpfExtensions:DataGridExtensions.AutoScroll="True"
+                  ItemsSource="{Binding TestLogs}" PresentationTraceSources.TraceLevel="High">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Time}"
+                    Header="时间" />
+                <DataGridTextColumn
+                    Width="3*"
+                    Binding="{Binding Log}"
+                    Header="消息" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 
 </UserControl>

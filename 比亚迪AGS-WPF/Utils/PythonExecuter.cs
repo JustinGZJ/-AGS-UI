@@ -64,6 +64,7 @@ public class PythonExecutor : IScriptExecutor
     {
         using (Py.GIL())
         {
+            // PythonEngine.
             using var scope = Py.CreateScope();
             var code = File.ReadAllText(moduleName);
             var pyObject = scope.Exec(code);

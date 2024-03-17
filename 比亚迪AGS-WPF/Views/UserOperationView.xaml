@@ -3,7 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:services="clr-namespace:比亚迪AGS_WPF.Services"
              mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=services:UserOperationViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid />
+    <UniformGrid Columns="4">
+        <Button Content="开路校准" Style="{StaticResource ButtonPrimary}" Command="{Binding CalibrationCommand }" CommandParameter="OPEN"  HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="短路校准" Style="{StaticResource ButtonPrimary}" Command="{Binding CalibrationCommand }" CommandParameter="SHORT" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
+    </UniformGrid>
 </UserControl>
